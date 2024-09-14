@@ -12,3 +12,158 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id String @id @default(uuid())
+  email String @unique 
+  password String
+  role UserRole
+  status UserStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //relation fields
+  admin Admin?
+  adopter Adopter?
+  publisher Publisher?
+
+  @@map("users")
+}
+
+model Admin{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  contactNumber String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //relation
+  user User @relation(fields: [email], references: [email])
+  //change table name
+  @@map("admins")
+}
+
+model Adopter{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  address String?
+  contactNumber String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //relation
+  user User @relation(fields: [email], references: [email])
+  adpotions Adoption[]
+  review Review[]
+  //change table name
+  @@map("adopters")
+}
+
+model Publisher{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  address String?
+  contactNumber String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //relation
+  user User @relation(fields: [email], references: [email])
+  pets Pet[]
+  review Review[]
+  //change table name
+  @@map("publishers")
+}
+
+model Pet {
+  id String @id @default(uuid())
+  name String
+  description String
+  gender Gender
+  age Int
+  breed String
+  size PetSize
+  healthStatus HealthStatus
+  published Boolean @default(false)
+  status PetPublishStatus @default(PENDING)
+  location String
+  isAdopt Boolean @default(false)
+  publisherId String
+  //relation
+  publisher Publisher @relation(fields: [publisherId], references: [id])
+  adpotion Adoption?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pets")
+}
+
+model Adoption {
+  id String @id @default(uuid())
+  petId String @unique
+  pet Pet @relation(fields: [petId], references: [id])
+  adopterId String
+  adopter Adopter @relation(fields: [adopterId], references: [id])
+
+  adoptionDate DateTime @default(now())
+  @@map("adoptions")
+}
+
+model Review {
+  id String @id @default(uuid())
+  rating Int
+  comment String?
+  reviewerId String
+  
+ adopter Adopter? @relation(fields: [reviewerId], references: [id], map: "adopter_review_fkey")
+
+  publisher Publisher? @relation(fields: [reviewerId], references: [id], map: "publisher_review_fkey")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  PET_ADOPTER
+  PET_PUBLISHER
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum PetSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum HealthStatus {
+  VACCINATED
+  SPAYED_NEUTERED
+  HEALTHY
+  SPECIAL_NEEDS
+  UNKNOWN
+}
+
+enum PetPublishStatus {
+  PENDING
+  REJECTED
+  APPROVED
+}
