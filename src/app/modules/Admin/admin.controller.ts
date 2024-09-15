@@ -4,13 +4,13 @@ import statusCodes from "http-status-codes";
 
 const getAllAdmin: RequestHandler = async (req, res) => {
   try {
-    const result = await AdminServices.getAllAdminFromDB();
+    const result = await AdminServices.getAllAdminFromDB(req.query);
     res.status(statusCodes.OK).json({
       success: true,
       message: "All admin fetched!",
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(statusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
