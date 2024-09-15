@@ -15,10 +15,10 @@ datasource db {
 
 model User {
   id String @id @default(uuid())
-  email String @unique 
   password String
+  email String @unique 
   role UserRole
-  status UserStatus
+  status UserStatus @default(ACTIVE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -36,6 +36,7 @@ model Admin{
   email String @unique
   profilePhoto String?
   contactNumber String
+  address String?
   isDeleted Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
