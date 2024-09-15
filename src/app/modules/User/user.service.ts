@@ -4,11 +4,9 @@ import { IAdminPayload } from "../../../types/user";
 import bcrypt from "bcrypt";
 
 const createAdminIntoDB = async (payload: IAdminPayload) => {
-  console.log(payload);
+  const hashedPassword = await bcrypt.hash(payload.password, 12);
 
   const result = await prisma.$transaction(async (transactionClient) => {
-    const hashedPassword = await bcrypt.hash(payload.password, 12);
-
     await transactionClient.user.create({
       data: {
         password: hashedPassword,
