@@ -28,11 +28,21 @@ const loginUserIntoDB = async (payload: {
     email: user.email,
     role: user.role,
   };
-  const token = jwt.sign(jwtPayload, "abcde", {
+  //generate accessToken
+  const accessToken = jwt.sign(jwtPayload, "abcde", {
     algorithm: "HS256",
-    expiresIn: "3d",
+    expiresIn: "1d",
   });
-  console.log(token);
+  //generate refreshToken
+  const refreshToken = jwt.sign(jwtPayload, "abcdefgh", {
+    algorithm: "HS256",
+    expiresIn: "30d",
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 export const AuthService = {
