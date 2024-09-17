@@ -1,6 +1,6 @@
 import { UserRole } from "@prisma/client";
 
-import { IAdminPayload } from "../../../types/user";
+import { IAdminPayload } from "../../../interface/user";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 

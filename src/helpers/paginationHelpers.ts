@@ -1,6 +1,9 @@
-import { IPagination, IPaginationResult } from "../types/global";
+import { IPaginationResult } from "../interface/pagination";
+import { IPaginationOptions } from "../interface/pagination";
 
-const calculatePagination = (options: IPagination): IPaginationResult => {
+const calculatePagination = (
+  options: IPaginationOptions
+): IPaginationResult => {
   const page: number = Number(options.page) || 1;
   const limit: number = Number(options.limit) || 10;
   const skip: number = (page - 1) * limit;
