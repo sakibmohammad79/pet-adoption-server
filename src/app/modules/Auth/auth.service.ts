@@ -1,7 +1,8 @@
 import { UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtHelpers } from "../../../helpers/jwtHelper";
 
 const loginUserIntoDB = async (payload: {
   password: string;
@@ -29,15 +30,13 @@ const loginUserIntoDB = async (payload: {
     role: user.role,
   };
   //generate accessToken
-  const accessToken = jwt.sign(jwtPayload, "abcde", {
-    algorithm: "HS256",
-    expiresIn: "1d",
-  });
+  const accessToken = await jwtHelpers.generateToken(jwtPayload, "abced", "3d");
   //generate refreshToken
-  const refreshToken = jwt.sign(jwtPayload, "abcdefgh", {
-    algorithm: "HS256",
-    expiresIn: "30d",
-  });
+  const refreshToken = await jwtHelpers.generateToken(
+    jwtPayload,
+    "abcedef",
+    "30d"
+  );
 
   return {
     accessToken,
@@ -45,6 +44,28 @@ const loginUserIntoDB = async (payload: {
   };
 };
 
+const refreshToken = async (refreshToken: string) => {
+  const decodedData = await jwtHelpers.verifyToken(refreshToken, "abcedef");
+
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: decodedData?.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  const jwtPayload = {
+    userId: userData.id,
+    email: userData.email,
+    role: userData.role,
+  };
+  //generate access token
+  const accessToken = await jwtHelpers.generateToken(jwtPayload, "abced", "3d");
+
+  return { accessToken };
+};
+
 export const AuthService = {
   loginUserIntoDB,
+  refreshToken,
 };
