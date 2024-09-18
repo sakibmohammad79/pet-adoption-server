@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { jwtHelpers } from "../../../helpers/jwtHelper";
 import config from "../../../config";
+import ApiError from "../../error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const loginUserIntoDB = async (payload: {
   password: string;
@@ -22,7 +24,7 @@ const loginUserIntoDB = async (payload: {
   );
 
   if (!isPasswordCorrect) {
-    throw new Error("Your password is incorrect!");
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "Your password is incorrect!");
   }
 
   const jwtPayload = {

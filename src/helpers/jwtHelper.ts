@@ -1,5 +1,7 @@
 import { JwtPayload, Secret } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
+import ApiError from "../app/error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const generateToken = async (
   jwtPayload: JwtPayload,
@@ -17,7 +19,7 @@ const verifyToken = async (token: string, secret: Secret) => {
     const decodedData = jwt.verify(token, secret) as JwtPayload;
     return decodedData;
   } catch {
-    throw new Error("You are not authorized!");
+    throw new ApiError(StatusCodes.FORBIDDEN, "You are not authorized!");
   }
 };
 
