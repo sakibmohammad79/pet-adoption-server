@@ -9,9 +9,9 @@ import Guard from "../../middleware/guard";
 
 const router = Router();
 
-router.get("/", AdminController.getAllAdmin);
+router.get("/", Guard(UserRole.ADMIN), AdminController.getAllAdmin);
 
-router.get("/:id", AdminController.getSingleAdmin);
+router.get("/:id", Guard(UserRole.ADMIN), AdminController.getSingleAdmin);
 
 router.patch(
   "/:id",
