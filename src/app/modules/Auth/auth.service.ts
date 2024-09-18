@@ -1,8 +1,9 @@
 import { UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { jwtHelpers } from "../../../helpers/jwtHelper";
+import config from "../../../config";
 
 const loginUserIntoDB = async (payload: {
   password: string;
@@ -30,12 +31,16 @@ const loginUserIntoDB = async (payload: {
     role: user.role,
   };
   //generate accessToken
-  const accessToken = await jwtHelpers.generateToken(jwtPayload, "abced", "3d");
+  const accessToken = await jwtHelpers.generateToken(
+    jwtPayload,
+    config.jwt.access_token_secret as Secret,
+    config.jwt.access_token_expires_in as string
+  );
   //generate refreshToken
   const refreshToken = await jwtHelpers.generateToken(
     jwtPayload,
-    "abcedef",
-    "30d"
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string
   );
 
   return {
@@ -45,7 +50,10 @@ const loginUserIntoDB = async (payload: {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  const decodedData = await jwtHelpers.verifyToken(refreshToken, "abcedef");
+  const decodedData = await jwtHelpers.verifyToken(
+    refreshToken,
+    config.jwt.refresh_token_secret as string
+  );
 
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
