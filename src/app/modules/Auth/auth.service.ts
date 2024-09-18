@@ -68,7 +68,11 @@ const refreshToken = async (refreshToken: string) => {
     role: userData.role,
   };
   //generate access token
-  const accessToken = await jwtHelpers.generateToken(jwtPayload, "abced", "3d");
+  const accessToken = await jwtHelpers.generateToken(
+    jwtPayload,
+    config.jwt.access_token_secret as Secret,
+    config.jwt.access_token_expires_in as string
+  );
 
   return { accessToken };
 };
