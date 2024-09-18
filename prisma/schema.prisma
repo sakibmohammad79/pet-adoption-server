@@ -32,10 +32,13 @@ model User {
 
 model Admin{
   id String @id @default(uuid())
-  name String
+  firstName   String
+  lastName    String
+  gender Gender? 
+  birthDate   DateTime?
   email String @unique
   profilePhoto String?
-  contactNumber String
+  contactNumber String?
   address String?
   isDeleted Boolean @default(false)
   createdAt DateTime @default(now())
@@ -49,7 +52,10 @@ model Admin{
 
 model Adopter{
   id String @id @default(uuid())
-  name String
+  firstName   String
+  lastName    String
+  gender Gender?
+  birthDate   DateTime?
   email String @unique
   profilePhoto String?
   address String?
@@ -68,7 +74,10 @@ model Adopter{
 
 model Publisher{
   id String @id @default(uuid())
-  name String
+  firstName   String
+  lastName    String
+  gender Gender?
+  birthDate   DateTime?
   email String @unique
   profilePhoto String?
   address String?
@@ -86,7 +95,9 @@ model Publisher{
 
 model Pet {
   id String @id @default(uuid())
-  name String
+  firstName   String
+  lastName    String
+  birthDate   DateTime?
   description String
   gender Gender
   age Int
@@ -148,6 +159,7 @@ enum UserStatus {
 enum Gender {
   MALE
   FEMALE
+  OTHER
 }
 
 enum PetSize {

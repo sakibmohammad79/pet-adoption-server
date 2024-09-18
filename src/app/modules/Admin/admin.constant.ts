@@ -1,5 +1,7 @@
 export const adminFilterableFields = [
-  "name",
+  "firstName",
+  "lastName",
+  "gender",
   "email",
   "contactNumber",
   "searchTerm",

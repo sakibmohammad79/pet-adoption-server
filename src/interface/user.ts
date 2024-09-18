@@ -1,8 +1,14 @@
+import { Gender } from "@prisma/client";
+
 export interface Admin {
-  name: string;
+  firstName: string;
+  lastName: string;
+  birthDate?: string | Date;
+  gender?: Gender;
+  profilePhoto?: string;
   email: string;
-  contactNumber: string;
-  address?: string | undefined | null;
+  contactNumber?: string;
+  address?: string;
 }
 export interface IAdminPayload {
   password: string;

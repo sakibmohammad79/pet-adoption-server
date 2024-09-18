@@ -1,4 +1,4 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 import { AdminServices } from "./admin.service";
 import statusCodes from "http-status-codes";
 import { pick } from "../../../shared/pick";

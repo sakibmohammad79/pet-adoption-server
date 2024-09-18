@@ -1,10 +1,11 @@
-import { UserRole } from "@prisma/client";
+import { Gender, UserRole } from "@prisma/client";
 
 import { IAdminPayload } from "../../../interface/user";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 
 const createAdminIntoDB = async (payload: IAdminPayload) => {
+  console.log(payload);
   const hashedPassword = await bcrypt.hash(payload.password, 12);
 
   const result = await prisma.$transaction(async (transactionClient) => {
@@ -18,10 +19,14 @@ const createAdminIntoDB = async (payload: IAdminPayload) => {
 
     const createdAdminData = await transactionClient.admin.create({
       data: {
-        name: payload.admin.name,
+        firstName: payload.admin.firstName,
+        lastName: payload.admin.lastName,
         email: payload.admin.email,
         contactNumber: payload.admin.contactNumber,
-        address: payload.admin.address ?? "",
+        address: payload.admin.address,
+        gender: payload.admin.gender,
+        birthDate: payload.admin.birthDate,
+        profilePhoto: payload.admin.profilePhoto,
       },
     });
 
