@@ -10,6 +10,7 @@ const emailSender = async (userEmail: string, html: string) => {
       user: config.email_send_from,
       pass: config.email_sender_google_pass,
     },
+    tls: { rejectUnauthorized: false },
   });
 
   // async..await is not allowed in global scope, must use a wrapper

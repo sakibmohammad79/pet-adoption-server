@@ -148,9 +148,44 @@ const forgotPassword = async (payload: { email: string }) => {
   );
 };
 
+const resetPassword = async (
+  payload: { id: string; newPassword: string },
+  token: string
+) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: payload.id,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  const isVerifiedUser = await jwtHelpers.verifyToken(
+    token,
+    config.jwt.forgot_password_token_secret as Secret
+  );
+
+  if (!isVerifiedUser) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "You are not authorized!");
+  }
+
+  const hashPassword = bcrypt.hashSync(payload.newPassword, 12);
+
+  const updatePassword = await prisma.user.update({
+    where: {
+      id: user.id,
+      email: user.email,
+    },
+    data: {
+      password: hashPassword,
+    },
+  });
+  return updatePassword;
+};
+
 export const AuthService = {
   loginUserIntoDB,
   refreshToken,
   changePassword,
   forgotPassword,
+  resetPassword,
 };
