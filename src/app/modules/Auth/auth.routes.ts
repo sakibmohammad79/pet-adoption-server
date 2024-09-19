@@ -21,5 +21,6 @@ router.post(
   Guard(UserRole.ADMIN, UserRole.PET_ADOPTER, UserRole.PET_PUBLISHER),
   AuthController.changePassword
 );
+router.post("/forgot-password", AuthController.forgotPassword);
 
 export const AuthRoutes = router;

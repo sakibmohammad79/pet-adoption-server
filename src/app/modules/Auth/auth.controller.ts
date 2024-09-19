@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
@@ -26,18 +26,30 @@ const refreshToken: RequestHandler = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Send refresh token successfully!",
+    message: "generate re-access token successfully!",
     data: result,
   });
 });
-const changePassword: RequestHandler = catchAsync(async (req, res) => {
-  const user = req.user;
+const changePassword: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res) => {
+    const user = req.user;
+    const payload = req.body;
+    const result = await AuthService.changePassword(user, payload);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Password change successfully!",
+      data: result,
+    });
+  }
+);
+const forgotPassword: RequestHandler = catchAsync(async (req: Request, res) => {
   const payload = req.body;
-  const result = await AuthService.changePassword(user, payload);
+  const result = await AuthService.forgotPassword(payload);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Password change successfully!",
+    message: "Send forgot password link in your email!",
     data: result,
   });
 });
@@ -46,4 +58,5 @@ export const AuthController = {
   loginUser,
   refreshToken,
   changePassword,
+  forgotPassword,
 };
