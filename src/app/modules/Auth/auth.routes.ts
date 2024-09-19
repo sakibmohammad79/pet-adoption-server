@@ -2,6 +2,9 @@ import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import { validateRequest } from "../../middleware/validateRequest";
 import { AuthValidationSchema } from "./auth.validation";
+import { AuthService } from "./auth.service";
+import Guard from "../../middleware/guard";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
@@ -12,5 +15,11 @@ router.post(
 );
 
 router.post("/refresh-token", AuthController.refreshToken);
+
+router.post(
+  "/change-password",
+  Guard(UserRole.ADMIN, UserRole.PET_ADOPTER, UserRole.PET_PUBLISHER),
+  AuthController.changePassword
+);
 
 export const AuthRoutes = router;

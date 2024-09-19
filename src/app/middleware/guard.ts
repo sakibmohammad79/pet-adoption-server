@@ -15,9 +15,13 @@ const Guard = (...roles: string[]) => {
         token,
         config.jwt.access_token_secret as string
       );
+
+      req.user = decodedData;
+
       if (roles.length && !roles.includes(decodedData.role)) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You are not authorized!");
       }
+
       next();
     } catch (error) {
       next(error);
