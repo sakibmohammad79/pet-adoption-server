@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { UserController } from "./user.controller";
 import { UserValidationSchema } from "./user.validation";
 import { validateRequest } from "../../middleware/validateRequest";
@@ -12,8 +12,12 @@ router.post(
   "/",
   Guard(UserRole.ADMIN),
   imageUploader.upload.single("file"),
-  validateRequest(UserValidationSchema.createAdminValidationSchema),
-  UserController.createAdmin
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = UserValidationSchema.createAdminValidationSchema.parse(
+      JSON.parse(req.body.data)
+    );
+    return UserController.createAdmin(req, res, next);
+  }
 );
 
 export const UserRoutes = router;
