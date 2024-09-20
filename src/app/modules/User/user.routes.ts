@@ -8,7 +8,7 @@ import { imageUploader } from "../../../helpers/imageUploader";
 const router = Router();
 
 router.post(
-  "/",
+  "/create-admin",
   Guard(UserRole.ADMIN),
   imageUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +16,17 @@ router.post(
       JSON.parse(req.body.data)
     );
     return UserController.createAdmin(req, res, next);
+  }
+);
+router.post(
+  "/create-publisher",
+  // Guard(UserRole.PET_PUBLISHER),
+  imageUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = UserValidationSchema.createPetPublisherValidationSchema.parse(
+      JSON.parse(req.body.data)
+    );
+    return UserController.createPetPublisher(req, res, next);
   }
 );
 

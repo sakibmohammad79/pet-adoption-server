@@ -13,7 +13,19 @@ const createAdmin: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const createPetPublisher: RequestHandler = catchAsync(
+  async (req, res, next) => {
+    const result = await UserServices.createPetPublisherIntoDB(req);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet Publisher created successfully!",
+      data: result,
+    });
+  }
+);
 
 export const UserController = {
   createAdmin,
+  createPetPublisher,
 };
