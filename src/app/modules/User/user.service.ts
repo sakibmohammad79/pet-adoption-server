@@ -1,19 +1,18 @@
-import { Gender, UserRole } from "@prisma/client";
-import { IAdminPayload } from "../../../interface/user";
+import { UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 import { imageUploader } from "../../../helpers/imageUploader";
+import { IFile } from "../../../interface/file";
 
 const createAdminIntoDB = async (req: any) => {
-  console.log(req.file, req.body);
+  const file: IFile = req.file;
 
-  const file = req.file;
   if (file) {
     const uploadToCloundinary = await imageUploader.imageUploadToCloudinary(
       file
     );
     //console.log(uploadToCloundinary.secure_url);
-    req.body.admin.profilePhoto = uploadToCloundinary.secure_url;
+    req.body.admin.profilePhoto = uploadToCloundinary?.secure_url;
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 12);

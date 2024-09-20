@@ -18,4 +18,6 @@ export default {
   reset_password_link: process.env.RESET_PASSWORD_LINK,
   email_send_from: process.env.EMAIL_SEND_FROM,
   email_sender_google_pass: process.env.EMAIL_SENDER_GOOGLE_PASS,
+  image_api_key: process.env.IMAGE_API_KEY,
+  image_api_secret: process.env.IMAGE_API_SECRET,
 };
