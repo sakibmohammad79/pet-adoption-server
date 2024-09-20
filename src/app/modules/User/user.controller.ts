@@ -24,8 +24,18 @@ const createPetPublisher: RequestHandler = catchAsync(
     });
   }
 );
+const createPetAdopter: RequestHandler = catchAsync(async (req, res, next) => {
+  const result = await UserServices.createPetAdopterIntoDB(req);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Pet Adopter created successfully!",
+    data: result,
+  });
+});
 
 export const UserController = {
   createAdmin,
   createPetPublisher,
+  createPetAdopter,
 };

@@ -20,13 +20,22 @@ router.post(
 );
 router.post(
   "/create-publisher",
-  // Guard(UserRole.PET_PUBLISHER),
   imageUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = UserValidationSchema.createPetPublisherValidationSchema.parse(
       JSON.parse(req.body.data)
     );
     return UserController.createPetPublisher(req, res, next);
+  }
+);
+router.post(
+  "/create-adopter",
+  imageUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = UserValidationSchema.createPetAdopterValidationSchema.parse(
+      JSON.parse(req.body.data)
+    );
+    return UserController.createPetAdopter(req, res, next);
   }
 );
 
