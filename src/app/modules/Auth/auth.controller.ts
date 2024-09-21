@@ -54,7 +54,7 @@ const forgotPassword: RequestHandler = catchAsync(async (req: Request, res) => {
   });
 });
 
-const resetPassword: RequestHandler = catchAsync(async (req: Request, res) => {
+const resetPassword: RequestHandler = catchAsync(async (req, res) => {
   const token = req.headers.authorization || "";
   await AuthService.resetPassword(req.body, token);
   sendResponse(res, {

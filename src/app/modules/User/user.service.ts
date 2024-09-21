@@ -176,9 +176,26 @@ const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
   };
 };
 
+const changeUserStatus = async (id: string, status: UserRole) => {
+  const user = await prisma.user.findFirstOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const updateUserStatus = await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: status,
+  });
+  return updateUserStatus;
+};
+
 export const UserServices = {
   createAdminIntoDB,
   createPetPublisherIntoDB,
   createPetAdopterIntoDB,
   getAllUserFromDB,
+  changeUserStatus,
 };

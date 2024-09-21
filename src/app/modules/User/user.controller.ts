@@ -50,9 +50,22 @@ const getAllUser: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const changeUserStatus: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await UserServices.changeUserStatus(id, req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "User status change successfully!",
+    data: result,
+  });
+});
+
 export const UserController = {
   createAdmin,
   createPetPublisher,
   createPetAdopter,
   getAllUser,
+  changeUserStatus,
 };

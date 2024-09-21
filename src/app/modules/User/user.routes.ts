@@ -4,6 +4,8 @@ import { UserValidationSchema } from "./user.validation";
 import { UserRole } from "@prisma/client";
 import Guard from "../../middleware/guard";
 import { imageUploader } from "../../../helpers/imageUploader";
+import { UserServices } from "./user.service";
+import { validateRequest } from "../../middleware/validateRequest";
 
 const router = Router();
 
@@ -30,6 +32,7 @@ router.post(
     return UserController.createPetPublisher(req, res, next);
   }
 );
+
 router.post(
   "/create-adopter",
   imageUploader.upload.single("file"),
@@ -39,6 +42,13 @@ router.post(
     );
     return UserController.createPetAdopter(req, res, next);
   }
+);
+
+router.patch(
+  "/status/:id",
+  Guard(UserRole.ADMIN),
+  validateRequest(UserValidationSchema.changeUserStatusSchema),
+  UserController.changeUserStatus
 );
 
 export const UserRoutes = router;
