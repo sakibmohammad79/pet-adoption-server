@@ -1,3 +1,10 @@
+export const adminSearchableFields = [
+  "firstName",
+  "lastName",
+  "email",
+  "contactNumber",
+];
+
 export const adminFilterableFields = [
   "firstName",
   "lastName",
@@ -6,5 +13,3 @@ export const adminFilterableFields = [
   "contactNumber",
   "searchTerm",
 ];
-
-export const adminSearchableFields = ["name", "email", "contactNumber"];

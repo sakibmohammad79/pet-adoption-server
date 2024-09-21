@@ -3,6 +3,8 @@ import { UserServices } from "./user.service";
 import { StatusCodes } from "http-status-codes";
 import { sendResponse } from "../../../shared/sendResponse";
 import catchAsync from "../../../shared/catchAsync";
+import { pick } from "../../../shared/pick";
+import { userFilterableFields } from "./user.constant";
 
 const createAdmin: RequestHandler = catchAsync(async (req, res, next) => {
   const result = await UserServices.createAdminIntoDB(req);
@@ -34,8 +36,23 @@ const createPetAdopter: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
+const getAllUser: RequestHandler = catchAsync(async (req, res) => {
+  const filters = pick(req.query, userFilterableFields);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+  const result = await UserServices.getAllUserFromDB(filters, options);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "All user fetched!",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 export const UserController = {
   createAdmin,
   createPetPublisher,
   createPetAdopter,
+  getAllUser,
 };

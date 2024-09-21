@@ -1,9 +1,12 @@
-import { Admin, Adopter, Publisher, UserRole } from "@prisma/client";
+import { Admin, Adopter, Prisma, Publisher, UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 import { imageUploader } from "../../../helpers/imageUploader";
 import { IFile } from "../../../interface/file";
 import { Request } from "express";
+import { IPaginationOptions } from "../../../interface/pagination";
+import { paginationHelpers } from "../../../helpers/paginationHelpers";
+import { userSearchableFields } from "./user.constant";
 
 const createAdminIntoDB = async (req: Request): Promise<Admin> => {
   const file = req.file as IFile;
@@ -96,8 +99,86 @@ const createPetAdopterIntoDB = async (req: Request): Promise<Adopter> => {
   return result;
 };
 
+const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
+  const { searchTerm, ...filterData } = params;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(options);
+  const andCondition: Prisma.UserWhereInput[] = [];
+
+  if (params.searchTerm) {
+    andCondition.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: params.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  //search field exact same
+
+  if (Object.keys(filterData).length > 0) {
+    andCondition.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+  //becuase admin see all user
+  // andCondition.push({
+  //   isDeleted: false,
+  // });
+
+  // console.dir(andCondition, { depth: "infinity" });
+  const whereCondition: Prisma.UserWhereInput = andCondition.length
+    ? { AND: andCondition }
+    : {};
+
+  const result = await prisma.user.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      admin: true,
+      publisher: true,
+      adopter: true,
+    },
+  });
+
+  const total = await prisma.user.count({
+    where: whereCondition,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const UserServices = {
   createAdminIntoDB,
   createPetPublisherIntoDB,
   createPetAdopterIntoDB,
+  getAllUserFromDB,
 };

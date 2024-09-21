@@ -7,6 +7,8 @@ import { imageUploader } from "../../../helpers/imageUploader";
 
 const router = Router();
 
+router.get("/", Guard(UserRole.ADMIN), UserController.getAllUser);
+
 router.post(
   "/create-admin",
   Guard(UserRole.ADMIN),
