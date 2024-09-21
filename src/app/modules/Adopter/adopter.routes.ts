@@ -19,15 +19,12 @@ router.patch(
   AdopterController.updateAdopter
 );
 
-// router.delete(
-//   "/:id",
-//   Guard(UserRole.ADMIN),
-//   PublisherController.deletePublisher
-// );
-// router.delete(
-//   "/soft/:id",
-//   Guard(UserRole.ADMIN),
-//   PublisherController.softDeletePublisher
-// );
+router.delete("/:id", Guard(UserRole.ADMIN), AdopterController.deleteAdopter);
+
+router.delete(
+  "/soft/:id",
+  Guard(UserRole.ADMIN),
+  AdopterController.softDeleteAdopter
+);
 
 export const AdopterRoutes = router;

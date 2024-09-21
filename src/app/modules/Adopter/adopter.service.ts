@@ -139,64 +139,63 @@ const updateAdopterIntoDB = async (
   return updateAdopter;
 };
 
-// const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
-//   const admin = await prisma.publisher.findUniqueOrThrow({
-//     where: {
-//       id,
-//     },
-//   });
-//   const result = await prisma.$transaction(async (transactionClient) => {
-//     const publisherProfileDeleteData = await transactionClient.publisher.delete(
-//       {
-//         where: {
-//           id: admin.id,
-//         },
-//       }
-//     );
-//     await transactionClient.user.delete({
-//       where: {
-//         email: publisherProfileDeleteData.email,
-//       },
-//     });
-//     return publisherProfileDeleteData;
-//   });
-//   return result;
-// };
+const deleteAdopterFromDB = async (id: string): Promise<Adopter | null> => {
+  const adopter = await prisma.adopter.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const adopterProfileDeleteData = await transactionClient.adopter.delete({
+      where: {
+        id: adopter.id,
+      },
+    });
+    await transactionClient.user.delete({
+      where: {
+        email: adopterProfileDeleteData.email,
+      },
+    });
+    return adopterProfileDeleteData;
+  });
+  return result;
+};
 
-// const softDeletePublisherFromDB = async (
-//   id: string
-// ): Promise<Publisher | null> => {
-//   const publisher = await prisma.publisher.findUniqueOrThrow({
-//     where: {
-//       id,
-//       isDeleted: false,
-//     },
-//   });
-//   const result = await prisma.$transaction(async (transactionClient) => {
-//     const publisherProfileSoftDeleteData =
-//       await transactionClient.publisher.update({
-//         where: {
-//           id: publisher.id,
-//         },
-//         data: {
-//           isDeleted: true,
-//         },
-//       });
-//     await transactionClient.user.update({
-//       where: {
-//         email: publisherProfileSoftDeleteData.email,
-//       },
-//       data: {
-//         status: UserStatus.DELETED,
-//       },
-//     });
-//     return publisherProfileSoftDeleteData;
-//   });
-//   return result;
-// };
+const softDeleteAdopterFromDB = async (id: string): Promise<Adopter | null> => {
+  const adopter = await prisma.adopter.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const adopterProfileSoftDeleteData = await transactionClient.adopter.update(
+      {
+        where: {
+          id: adopter.id,
+        },
+        data: {
+          isDeleted: true,
+        },
+      }
+    );
+    await transactionClient.user.update({
+      where: {
+        email: adopterProfileSoftDeleteData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+    return adopterProfileSoftDeleteData;
+  });
+  return result;
+};
 
 export const AdopterService = {
   getAllAdopterFromDB,
   getSingleAdopterById,
   updateAdopterIntoDB,
+  deleteAdopterFromDB,
+  softDeleteAdopterFromDB,
 };

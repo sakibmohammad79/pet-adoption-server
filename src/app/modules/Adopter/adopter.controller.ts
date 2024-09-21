@@ -43,32 +43,32 @@ const updateAdopter: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-// const deletePublisher = catchAsync(async (req, res, next) => {
-//   const { id } = req.params;
-//   const result = await PublisherService.deletePublisherFromDB(id);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Publisher deleted successfully!",
-//     data: result,
-//   });
-// });
+const deleteAdopter = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await AdopterService.deleteAdopterFromDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Adopter deleted successfully!",
+    data: result,
+  });
+});
 
-// const softDeletePublisher: RequestHandler = catchAsync(
-//   async (req, res, next) => {
-//     const { id } = req.params;
-//     const result = await PublisherService.softDeletePublisherFromDB(id);
-//     sendResponse(res, {
-//       statusCode: StatusCodes.OK,
-//       success: true,
-//       message: "Publisher soft deleted successfully!",
-//       data: result,
-//     });
-//   }
-// );
+const softDeleteAdopter: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await AdopterService.softDeleteAdopterFromDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Adopter soft deleted successfully!",
+    data: result,
+  });
+});
 
 export const AdopterController = {
   getAllPublisher,
   getSingleAdopter,
   updateAdopter,
+  deleteAdopter,
+  softDeleteAdopter,
 };
