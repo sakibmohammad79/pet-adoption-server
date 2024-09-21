@@ -1,4 +1,4 @@
-import { UserStatus } from "@prisma/client";
+import { UserRole, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
@@ -18,6 +18,40 @@ const loginUserIntoDB = async (payload: {
       status: UserStatus.ACTIVE,
     },
   });
+
+  if (user.role === UserRole.ADMIN) {
+    const admin = await prisma.admin.findUnique({
+      where: {
+        email: user.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
+  if (user.role === UserRole.PET_ADOPTER) {
+    const admin = await prisma.adopter.findUnique({
+      where: {
+        email: user.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
+  if (user.role === UserRole.PET_PUBLISHER) {
+    const admin = await prisma.publisher.findUnique({
+      where: {
+        email: user.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
 
   const isPasswordCorrect = await bcrypt.compare(
     payload.password,
@@ -90,6 +124,40 @@ const changePassword = async (
       status: UserStatus.ACTIVE,
     },
   });
+
+  if (userData.role === UserRole.ADMIN) {
+    const admin = await prisma.admin.findUnique({
+      where: {
+        email: userData.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
+  if (userData.role === UserRole.PET_ADOPTER) {
+    const admin = await prisma.adopter.findUnique({
+      where: {
+        email: userData.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
+  if (userData.role === UserRole.PET_PUBLISHER) {
+    const admin = await prisma.publisher.findUnique({
+      where: {
+        email: userData.email,
+        isDeleted: false,
+      },
+    });
+    if (!admin) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
+    }
+  }
 
   const isOldPasswordIsCorrect = await bcrypt.compare(
     payload.oldPassword,
