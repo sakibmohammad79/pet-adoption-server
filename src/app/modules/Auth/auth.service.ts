@@ -7,6 +7,7 @@ import config from "../../../config";
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
 import emailSender from "./emialSender";
+import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
 
 const loginUserIntoDB = async (payload: {
   password: string;
@@ -19,38 +20,8 @@ const loginUserIntoDB = async (payload: {
     },
   });
 
-  if (user.role === UserRole.ADMIN) {
-    const admin = await prisma.admin.findUnique({
-      where: {
-        email: user.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
-  }
-  if (user.role === UserRole.PET_ADOPTER) {
-    const admin = await prisma.adopter.findUnique({
-      where: {
-        email: user.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
-  }
-  if (user.role === UserRole.PET_PUBLISHER) {
-    const admin = await prisma.publisher.findUnique({
-      where: {
-        email: user.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
+  if (user.email && user.role) {
+    await checkIsDeleted(user.email, user.role);
   }
 
   const isPasswordCorrect = await bcrypt.compare(
@@ -99,6 +70,10 @@ const refreshToken = async (refreshToken: string) => {
     },
   });
 
+  if (userData.email && userData.role) {
+    await checkIsDeleted(userData.email, userData.role);
+  }
+
   const jwtPayload = {
     userId: userData.id,
     email: userData.email,
@@ -125,38 +100,8 @@ const changePassword = async (
     },
   });
 
-  if (userData.role === UserRole.ADMIN) {
-    const admin = await prisma.admin.findUnique({
-      where: {
-        email: userData.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
-  }
-  if (userData.role === UserRole.PET_ADOPTER) {
-    const admin = await prisma.adopter.findUnique({
-      where: {
-        email: userData.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
-  }
-  if (userData.role === UserRole.PET_PUBLISHER) {
-    const admin = await prisma.publisher.findUnique({
-      where: {
-        email: userData.email,
-        isDeleted: false,
-      },
-    });
-    if (!admin) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
-    }
+  if (userData.email && userData.role) {
+    await checkIsDeleted(userData.email, userData.role);
   }
 
   const isOldPasswordIsCorrect = await bcrypt.compare(
@@ -194,6 +139,10 @@ const forgotPassword = async (payload: { email: string }) => {
       status: UserStatus.ACTIVE,
     },
   });
+
+  if (user.email && user.role) {
+    await checkIsDeleted(user.email, user.role);
+  }
 
   const forgotPassToken = await jwtHelpers.generateToken(
     { eamil: user.email, role: user.role, userId: user.id },
