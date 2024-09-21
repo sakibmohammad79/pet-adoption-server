@@ -33,7 +33,33 @@ const getSinglePublisher: RequestHandler = catchAsync(
   }
 );
 
+const deletePublisher = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await PublisherService.deletePublisherFromDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Publisher deleted successfully!",
+    data: result,
+  });
+});
+
+const softDeletePublisher: RequestHandler = catchAsync(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const result = await PublisherService.softDeletePublisherFromDB(id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Publisher soft deleted successfully!",
+      data: result,
+    });
+  }
+);
+
 export const PublisherController = {
   getSinglePublisher,
   getAllPublisher,
+  deletePublisher,
+  softDeletePublisher,
 };

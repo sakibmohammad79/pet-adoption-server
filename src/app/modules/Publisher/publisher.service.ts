@@ -107,7 +107,65 @@ const getSinglePublisherById = async (
   return publisher;
 };
 
+const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
+  const admin = await prisma.publisher.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const publisherProfileDeleteData = await transactionClient.publisher.delete(
+      {
+        where: {
+          id: admin.id,
+        },
+      }
+    );
+    await transactionClient.user.delete({
+      where: {
+        email: publisherProfileDeleteData.email,
+      },
+    });
+    return publisherProfileDeleteData;
+  });
+  return result;
+};
+
+const softDeletePublisherFromDB = async (
+  id: string
+): Promise<Publisher | null> => {
+  const publisher = await prisma.publisher.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const publisherProfileSoftDeleteData =
+      await transactionClient.publisher.update({
+        where: {
+          id: publisher.id,
+        },
+        data: {
+          isDeleted: true,
+        },
+      });
+    await transactionClient.user.update({
+      where: {
+        email: publisherProfileSoftDeleteData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+    return publisherProfileSoftDeleteData;
+  });
+  return result;
+};
+
 export const PublisherService = {
   getSinglePublisherById,
   getAllPublisherFromDB,
+  deletePublisherFromDB,
+  softDeletePublisherFromDB,
 };

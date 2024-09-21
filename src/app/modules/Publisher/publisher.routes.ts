@@ -14,4 +14,15 @@ router.get(
   PublisherController.getSinglePublisher
 );
 
+router.delete(
+  "/:id",
+  Guard(UserRole.ADMIN),
+  PublisherController.deletePublisher
+);
+router.delete(
+  "/soft/:id",
+  Guard(UserRole.ADMIN),
+  PublisherController.softDeletePublisher
+);
+
 export const PublisherRoutes = router;
