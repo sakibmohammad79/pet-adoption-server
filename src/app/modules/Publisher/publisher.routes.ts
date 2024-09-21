@@ -2,6 +2,8 @@ import { Router } from "express";
 import { UserRole } from "@prisma/client";
 import Guard from "../../middleware/guard";
 import { PublisherController } from "./publisher.controller";
+import { validateRequest } from "../../middleware/validateRequest";
+import { publisherValidationSchema } from "./publisher.validation";
 
 const router = Router();
 
@@ -12,6 +14,13 @@ router.get(
   "/:id",
   Guard(UserRole.ADMIN),
   PublisherController.getSinglePublisher
+);
+
+router.patch(
+  "/:id",
+  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),
+  validateRequest(publisherValidationSchema.updatePublisherValidationSchema),
+  PublisherController.updatePublisher
 );
 
 router.delete(

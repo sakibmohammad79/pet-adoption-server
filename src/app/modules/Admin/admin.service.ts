@@ -5,6 +5,8 @@ import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import prisma from "../../../shared/prisma";
 import { IAdminFilterRequest } from "./admin.interface";
 import { IPaginationOptions } from "../../../interface/pagination";
+import ApiError from "../../error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const getAllAdminFromDB = async (
   params: IAdminFilterRequest,
@@ -72,6 +74,9 @@ const getAllAdminFromDB = async (
         : {
             createdAt: "desc",
           },
+    include: {
+      user: true,
+    },
   });
 
   const total = await prisma.admin.count({
@@ -89,14 +94,28 @@ const getAllAdminFromDB = async (
 };
 
 const getSingleAdminById = async (id: string): Promise<Admin | null> => {
-  const result = await prisma.admin.findUniqueOrThrow({
+  const admin = await prisma.admin.findUniqueOrThrow({
     where: {
       id,
       isDeleted: false,
     },
   });
 
-  return result;
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: admin.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
+  return admin;
 };
 
 const updateAdminIntoDB = async (
@@ -109,6 +128,21 @@ const updateAdminIntoDB = async (
       isDeleted: false,
     },
   });
+
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: admin.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
   const updatedAdmin = await prisma.admin.update({
     where: {
       id: admin.id,

@@ -107,6 +107,40 @@ const getSinglePublisherById = async (
   return publisher;
 };
 
+const updatePublisherIntoDB = async (
+  id: string,
+  payload: Partial<Publisher>
+): Promise<Publisher | null> => {
+  const publisher = await prisma.publisher.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: publisher.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
+  const updatePublisher = await prisma.publisher.update({
+    where: {
+      id: publisher.id,
+    },
+    data: payload,
+  });
+  return updatePublisher;
+};
+
 const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
   const admin = await prisma.publisher.findUniqueOrThrow({
     where: {
@@ -166,6 +200,7 @@ const softDeletePublisherFromDB = async (
 export const PublisherService = {
   getSinglePublisherById,
   getAllPublisherFromDB,
+  updatePublisherIntoDB,
   deletePublisherFromDB,
   softDeletePublisherFromDB,
 };
