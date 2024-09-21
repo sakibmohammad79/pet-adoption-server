@@ -1,8 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { Adopter, Prisma, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { adopterSearchableFields } from "./Adopter.constant";
+import ApiError from "../../error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const getAllAdopterFromDB = async (
   params: any,
@@ -75,69 +77,67 @@ const getAllAdopterFromDB = async (
   };
 };
 
-// const getSinglePublisherById = async (
-//   id: string
-// ): Promise<Publisher | null> => {
-//   const publisher = await prisma.publisher.findUniqueOrThrow({
-//     where: {
-//       id,
-//       isDeleted: false,
-//     },
-//     include: {
-//       user: true,
-//     },
-//   });
+const getSingleAdopterById = async (id: string): Promise<Adopter | null> => {
+  const adopter = await prisma.adopter.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    include: {
+      user: true,
+    },
+  });
 
-//   const isActiveUser = await prisma.user.findUnique({
-//     where: {
-//       email: publisher.email,
-//       status: UserStatus.ACTIVE,
-//     },
-//   });
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: adopter.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
 
-//   if (!isActiveUser) {
-//     throw new ApiError(
-//       StatusCodes.UNAUTHORIZED,
-//       "This user blocked or deleted by admin!"
-//     );
-//   }
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
 
-//   return publisher;
-// };
+  return adopter;
+};
 
-// const updatePublisherIntoDB = async (
-//   id: string,
-//   payload: Partial<Publisher>
-// ): Promise<Publisher | null> => {
-//   const publisher = await prisma.publisher.findUniqueOrThrow({
-//     where: {
-//       id,
-//       isDeleted: false,
-//     },
-//   });
+const updateAdopterIntoDB = async (
+  id: string,
+  payload: Partial<Adopter>
+): Promise<Adopter | null> => {
+  const adopter = await prisma.adopter.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
 
-//   const isActiveUser = await prisma.user.findUnique({
-//     where: {
-//       email: publisher.email,
-//       status: UserStatus.ACTIVE,
-//     },
-//   });
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: adopter.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
 
-//   if (!isActiveUser) {
-//     throw new ApiError(
-//       StatusCodes.UNAUTHORIZED,
-//       "This user blocked or deleted by admin!"
-//     );
-//   }
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
 
-//   const updatePublisher = await prisma.publisher.update({
-//     where: {
-//       id: publisher.id,
-//     },
-//     data: payload,
-//   });
-//   return updatePublisher;
-// };
+  const updateAdopter = await prisma.adopter.update({
+    where: {
+      id: adopter.id,
+    },
+    data: payload,
+  });
+  return updateAdopter;
+};
 
 // const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
 //   const admin = await prisma.publisher.findUniqueOrThrow({
@@ -197,4 +197,6 @@ const getAllAdopterFromDB = async (
 
 export const AdopterService = {
   getAllAdopterFromDB,
+  getSingleAdopterById,
+  updateAdopterIntoDB,
 };

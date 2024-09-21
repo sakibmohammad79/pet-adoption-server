@@ -20,30 +20,28 @@ const getAllPublisher: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// const getSinglePublisher: RequestHandler = catchAsync(
-//   async (req, res, next) => {
-//     const { id } = req.params;
-//     const result = await PublisherService.getSinglePublisherById(id);
-//     sendResponse(res, {
-//       statusCode: StatusCodes.OK,
-//       success: true,
-//       message: "Single Publisher fetched successfully!",
-//       data: result,
-//     });
-//   }
-// );
+const getSingleAdopter: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await AdopterService.getSingleAdopterById(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Single Adopter fetched successfully!",
+    data: result,
+  });
+});
 
-// const updatePublisher: RequestHandler = catchAsync(async (req, res, next) => {
-//   const { id } = req.params;
-//   const data = req.body;
-//   const result = await PublisherService.updatePublisherIntoDB(id, data);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Publisher data updated successfully!",
-//     data: result,
-//   });
-// });
+const updateAdopter: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const data = req.body;
+  const result = await AdopterService.updateAdopterIntoDB(id, data);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Adopter data updated successfully!",
+    data: result,
+  });
+});
 
 // const deletePublisher = catchAsync(async (req, res, next) => {
 //   const { id } = req.params;
@@ -71,4 +69,6 @@ const getAllPublisher: RequestHandler = catchAsync(async (req, res) => {
 
 export const AdopterController = {
   getAllPublisher,
+  getSingleAdopter,
+  updateAdopter,
 };
