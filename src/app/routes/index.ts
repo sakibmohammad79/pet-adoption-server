@@ -3,6 +3,7 @@ import { UserRoutes } from "../modules/User/user.routes";
 import { AdminRoutes } from "../modules/Admin/admin.routes";
 import { AuthRoutes } from "../modules/Auth/auth.routes";
 import { PublisherRoutes } from "../modules/Publisher/publisher.routes";
+import { AdopterRoutes } from "../modules/Adopter/adopter.routes";
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: "/publisher",
     route: PublisherRoutes,
+  },
+  {
+    path: "/adopter",
+    route: AdopterRoutes,
   },
 ];
 
