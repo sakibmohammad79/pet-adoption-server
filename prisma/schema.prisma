@@ -95,30 +95,32 @@ model Publisher{
 
 model Pet {
   id String @id @default(uuid())
-  firstName   String
-  lastName    String
+  name   String
+  image String
   birthDate   DateTime?
-  description String
+  description String?
   gender Gender
   age Int
   breed String
+  weight      Float
+  height      Float
+  color       String
   size PetSize
   healthStatus HealthStatus
+  specialNeeds String?
   published Boolean @default(false)
   status PetPublishStatus @default(PENDING)
-  location String
+  location String?
   isAdopt Boolean @default(false)
+  isBooked Boolean @default(false)
   publisherId String
   //relation
   publisher Publisher @relation(fields: [publisherId], references: [id])
   adpotion Adoption?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@map("pets")
 }
-
 model Adoption {
   id String @id @default(uuid())
   petId String @unique
