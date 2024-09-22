@@ -105,7 +105,7 @@ const updatePetIntoDB = async (
       id,
       isAdopt: false,
       isBooked: false,
-      //isdeleted: false
+      // isDeleted: false,
     },
   });
 
@@ -136,8 +136,22 @@ const updatePetIntoDB = async (
   return updatePet;
 };
 
+const getSinglePetByID = async (id: string) => {
+  const petData = await prisma.pet.findFirstOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      publisher: true,
+    },
+  });
+
+  return petData;
+};
+
 export const PetService = {
   createPetIntoDB,
   getAllPetFromDB,
   updatePetIntoDB,
+  getSinglePetByID,
 };

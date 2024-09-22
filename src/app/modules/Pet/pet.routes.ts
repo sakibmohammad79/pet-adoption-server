@@ -9,6 +9,8 @@ const router = Router();
 
 router.get("/", PetController.getAllPet);
 
+router.get("/:id", PetController.getSinglePet);
+
 router.post(
   "/",
   Guard(UserRole.PET_PUBLISHER),

@@ -47,8 +47,21 @@ const updatePet: RequestHandler = catchAsync(
     });
   }
 );
+const getSinglePet: RequestHandler = catchAsync(
+  async (req: Request, res, next) => {
+    const { id } = req.params;
+    const result = await PetService.getSinglePetByID(id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet data fetched successfully!",
+      data: result,
+    });
+  }
+);
 export const PetController = {
   createPet,
   getAllPet,
   updatePet,
+  getSinglePet,
 };
