@@ -5,7 +5,6 @@ import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { petSearchableFields } from "./pet.constant";
-import { number } from "zod";
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
 
@@ -39,6 +38,10 @@ const getAllPetFromDB = async (params: any, options: IPaginationOptions) => {
       })),
     });
   }
+
+  andCondition.push({
+    isDeleted: false,
+  });
 
   // console.dir(andCondition, { depth: "infinity" });
   const whereCondition: Prisma.PetWhereInput =
@@ -105,7 +108,7 @@ const updatePetIntoDB = async (
       id,
       isAdopt: false,
       isBooked: false,
-      // isDeleted: false,
+      isDeleted: false,
     },
   });
 
@@ -149,9 +152,118 @@ const getSinglePetByID = async (id: string) => {
   return petData;
 };
 
+const deletePetFromDB = async (id: string, user: any): Promise<Pet | null> => {
+  // console.log(user);
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+  if (isActiveUser.email && isActiveUser.role) {
+    await checkIsDeleted(isActiveUser.email, isActiveUser.role);
+  }
+
+  const pet = await prisma.pet.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!pet) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Pet not found!");
+  }
+
+  if (pet.isAdopt) {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      "This pet already adopt by adopter!"
+    );
+  }
+  if (pet.isBooked) {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      "This pet already booked by adopter!"
+    );
+  }
+
+  const deletePet = await prisma.pet.delete({
+    where: {
+      id: pet.id,
+    },
+  });
+  return deletePet;
+};
+const softDeletePetFromDB = async (
+  id: string,
+  user: any
+): Promise<Pet | null> => {
+  // console.log(user);
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+  if (isActiveUser.email && isActiveUser.role) {
+    await checkIsDeleted(isActiveUser.email, isActiveUser.role);
+  }
+
+  const pet = await prisma.pet.findUnique({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  if (!pet) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Pet not found!");
+  }
+
+  if (pet.isAdopt) {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      "This pet already adopt by adopter!"
+    );
+  }
+  if (pet.isBooked) {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      "This pet already booked by adopter!"
+    );
+  }
+
+  const softDeletePet = await prisma.pet.update({
+    where: {
+      id: pet.id,
+    },
+    data: {
+      isDeleted: true,
+      isPublished: false,
+    },
+  });
+  return softDeletePet;
+};
+
 export const PetService = {
   createPetIntoDB,
   getAllPetFromDB,
   updatePetIntoDB,
   getSinglePetByID,
+  deletePetFromDB,
+  softDeletePetFromDB,
 };

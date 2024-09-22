@@ -108,10 +108,10 @@ model Pet {
   size PetSize
   healthStatus HealthStatus
   specialNeeds String?
-  published Boolean @default(false)
+  isPublished Boolean @default(false)
   status PetAdoptStatus @default(PENDING)
   location String?
-  idDeleted Boolean @default(false)
+  isDeleted Boolean @default(false)
   isAdopt Boolean @default(false)
   isBooked Boolean @default(false)
   publisherId String

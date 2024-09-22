@@ -59,9 +59,38 @@ const getSinglePet: RequestHandler = catchAsync(
     });
   }
 );
+const deletePet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await PetService.deletePetFromDB(id, user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet deleted successfully!",
+      data: result,
+    });
+  }
+);
+const softDeletePet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const user = req.user;
+
+    const result = await PetService.softDeletePetFromDB(id, user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet soft deleted successfully!",
+      data: result,
+    });
+  }
+);
 export const PetController = {
   createPet,
   getAllPet,
   updatePet,
   getSinglePet,
+  deletePet,
+  softDeletePet,
 };
