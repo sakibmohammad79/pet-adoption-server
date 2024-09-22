@@ -111,6 +111,7 @@ model Pet {
   published Boolean @default(false)
   status PetAdoptStatus @default(PENDING)
   location String?
+  idDeleted Boolean @default(false)
   isAdopt Boolean @default(false)
   isBooked Boolean @default(false)
   publisherId String

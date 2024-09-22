@@ -6,6 +6,8 @@ import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { petSearchableFields } from "./pet.constant";
 import { number } from "zod";
+import ApiError from "../../error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const getAllPetFromDB = async (params: any, options: IPaginationOptions) => {
   // console.log(params);
@@ -93,7 +95,49 @@ const createPetIntoDB = async (data: IPet, user: any) => {
   return result;
 };
 
+const updatePetIntoDB = async (
+  id: string,
+  payload: Partial<Pet>,
+  user: any
+): Promise<Pet | null> => {
+  const pet = await prisma.pet.findUniqueOrThrow({
+    where: {
+      id,
+      isAdopt: false,
+      isBooked: false,
+      //isdeleted: false
+    },
+  });
+
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: user.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
+  if (isActiveUser.email && isActiveUser.role) {
+    await checkIsDeleted(isActiveUser.email, isActiveUser.role);
+  }
+
+  const updatePet = await prisma.pet.update({
+    where: {
+      id: pet.id,
+    },
+    data: payload,
+  });
+  return updatePet;
+};
+
 export const PetService = {
   createPetIntoDB,
   getAllPetFromDB,
+  updatePetIntoDB,
 };

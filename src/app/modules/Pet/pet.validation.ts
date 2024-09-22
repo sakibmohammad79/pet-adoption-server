@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Gender, HealthStatus, PetSize } from "@prisma/client";
+import { Gender, HealthStatus, PetAdoptStatus, PetSize } from "@prisma/client";
 
 export const createPetSchema = z.object({
   body: z.object({
@@ -32,6 +32,50 @@ export const createPetSchema = z.object({
   }),
 });
 
+const updatePetSchema = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    image: z.string().optional(),
+    birthDate: z.preprocess((arg) => {
+      if (typeof arg === "string") {
+        const date = new Date(arg);
+        if (!isNaN(date.getTime()) && date.toISOString().startsWith(arg)) {
+          return date;
+        }
+        throw new Error("Invalid date format");
+      }
+      return arg;
+    }, z.date().optional()),
+    description: z.string().optional(),
+    gender: z.enum(["MALE", "FEMALE"]).optional(),
+    age: z
+      .number()
+      .min(0, { message: "Age must be a positive number!" })
+      .optional(),
+    breed: z.string().optional(),
+    weight: z
+      .number()
+      .min(0, { message: "Weight must be a positive number!" })
+      .optional(),
+    height: z
+      .number()
+      .min(0, { message: "Height must be a positive number!" })
+      .optional(),
+    color: z.string().optional(),
+    size: z.nativeEnum(PetSize).optional(), // Assuming PetSize is an enum from Prisma
+    healthStatus: z.nativeEnum(HealthStatus).optional(), // Assuming HealthStatus is an enum from Prisma
+    specialNeeds: z.string().optional(),
+    published: z.boolean().optional(),
+    status: z.nativeEnum(PetAdoptStatus).optional(), // Assuming PetAdoptStatus is an enum from Prisma
+    location: z.string().optional(),
+    isAdopt: z.boolean().optional(),
+    isBooked: z.boolean().optional(),
+  }),
+});
+
+export { updatePetSchema };
+
 export const petValidationSchema = {
   createPetSchema,
+  updatePetSchema,
 };

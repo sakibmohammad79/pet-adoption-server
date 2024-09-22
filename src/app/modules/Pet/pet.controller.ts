@@ -33,7 +33,22 @@ const createPet: RequestHandler = catchAsync(
   }
 );
 
+const updatePet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const data = req.body;
+    const user = req.user;
+    const result = await PetService.updatePetIntoDB(id, data, user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet data updated successfully!",
+      data: result,
+    });
+  }
+);
 export const PetController = {
   createPet,
   getAllPet,
+  updatePet,
 };

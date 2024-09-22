@@ -7,6 +7,7 @@ import { IAdminFilterRequest } from "./admin.interface";
 import { IPaginationOptions } from "../../../interface/pagination";
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
+import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
 
 const getAllAdminFromDB = async (
   params: IAdminFilterRequest,
@@ -115,6 +116,10 @@ const getSingleAdminById = async (id: string): Promise<Admin | null> => {
     );
   }
 
+  if (isActiveUser.email && isActiveUser.role) {
+    await checkIsDeleted(isActiveUser.email, isActiveUser.role);
+  }
+
   return admin;
 };
 
@@ -141,6 +146,10 @@ const updateAdminIntoDB = async (
       StatusCodes.UNAUTHORIZED,
       "This user blocked or deleted by admin!"
     );
+  }
+
+  if (isActiveUser.email && isActiveUser.role) {
+    await checkIsDeleted(isActiveUser.email, isActiveUser.role);
   }
 
   const updatedAdmin = await prisma.admin.update({
