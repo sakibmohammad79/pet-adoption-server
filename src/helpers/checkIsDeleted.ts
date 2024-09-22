@@ -17,24 +17,24 @@ export const checkIsDeleted = async (email: string, role: string) => {
   }
 
   if (role === UserRole.PET_ADOPTER) {
-    const admin = await prisma.adopter.findUnique({
+    const adopter = await prisma.adopter.findUnique({
       where: {
         email: email,
         isDeleted: false,
       },
     });
-    if (!admin) {
+    if (!adopter) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
     }
   }
   if (role === UserRole.PET_PUBLISHER) {
-    const admin = await prisma.publisher.findUnique({
+    const publisher = await prisma.publisher.findUnique({
       where: {
         email: email,
         isDeleted: false,
       },
     });
-    if (!admin) {
+    if (!publisher) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
     }
   }

@@ -31,3 +31,7 @@ export const createPetSchema = z.object({
     publisherId: z.string().min(1, { message: "Publisher ID is required!" }),
   }),
 });
+
+export const petValidationSchema = {
+  createPetSchema,
+};

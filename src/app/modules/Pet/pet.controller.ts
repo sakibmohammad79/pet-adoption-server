@@ -1,19 +1,39 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import { PetService } from "./pet.service";
 import { sendResponse } from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
+import { pick } from "../../../shared/pick";
+import { petFilterableFields } from "./pet.constant";
 
-const createPet: RequestHandler = catchAsync(async (req, res, next) => {
-  const result = await PetService.createPetIntoDB(req.body);
+const getAllPet: RequestHandler = catchAsync(async (req, res) => {
+  const filters = pick(req.query, petFilterableFields);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+  const result = await PetService.getAllPetFromDB(filters, options);
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Pet created successfully!",
-    data: result,
+    message: "All Pet fetched!",
+    meta: result.meta,
+    data: result.data,
   });
 });
 
+const createPet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const result = await PetService.createPetIntoDB(req.body, user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet created successfully!",
+      data: result,
+    });
+  }
+);
+
 export const PetController = {
   createPet,
+  getAllPet,
 };
