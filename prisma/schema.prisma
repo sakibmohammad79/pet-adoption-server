@@ -109,7 +109,7 @@ model Pet {
   healthStatus HealthStatus
   specialNeeds String?
   published Boolean @default(false)
-  status PetPublishStatus @default(PENDING)
+  status PetAdoptStatus @default(PENDING)
   location String?
   isAdopt Boolean @default(false)
   isBooked Boolean @default(false)
@@ -146,6 +146,20 @@ model Review {
   updatedAt DateTime @updatedAt
 }
 
+enum HealthStatus {
+  VACCINATED
+  SPAYED_NEUTERED
+  HEALTHY
+  SPECIAL_NEEDS
+  UNKNOWN
+}
+
+enum PetAdoptStatus {
+  PENDING
+  REJECTED
+  APPROVED
+}
+
 enum UserRole {
   ADMIN
   PET_ADOPTER
@@ -170,16 +184,3 @@ enum PetSize {
   LARGE
 }
 
-enum HealthStatus {
-  VACCINATED
-  SPAYED_NEUTERED
-  HEALTHY
-  SPECIAL_NEEDS
-  UNKNOWN
-}
-
-enum PetPublishStatus {
-  PENDING
-  REJECTED
-  APPROVED
-}
