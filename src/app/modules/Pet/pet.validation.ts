@@ -66,7 +66,6 @@ const updatePetSchema = z.object({
     healthStatus: z.nativeEnum(HealthStatus).optional(), // Assuming HealthStatus is an enum from Prisma
     specialNeeds: z.string().optional(),
     published: z.boolean().optional(),
-    status: z.nativeEnum(PetAdoptStatus).optional(), // Assuming PetAdoptStatus is an enum from Prisma
     location: z.string().optional(),
     isAdopt: z.boolean().optional(),
     isBooked: z.boolean().optional(),

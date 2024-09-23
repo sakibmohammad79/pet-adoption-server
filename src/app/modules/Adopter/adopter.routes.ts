@@ -7,6 +7,12 @@ import { adopterValidationSchema } from "./adopter.validation";
 
 const router = Router();
 
+router.patch(
+  "/pet-booked",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.petBooked
+);
+
 //all access just see the all publisher
 router.get("/", AdopterController.getAllPublisher);
 
@@ -25,12 +31,6 @@ router.delete(
   "/soft/:id",
   Guard(UserRole.ADMIN),
   AdopterController.softDeleteAdopter
-);
-
-router.patch(
-  "/pet-booked/:id",
-  Guard(UserRole.PET_ADOPTER),
-  AdopterController.petBooked
 );
 
 export const AdopterRoutes = router;

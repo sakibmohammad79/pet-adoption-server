@@ -109,7 +109,6 @@ model Pet {
   healthStatus HealthStatus
   specialNeeds String?
   isPublished Boolean @default(false)
-  status PetAdoptStatus @default(PENDING)
   location String?
   isDeleted Boolean @default(false)
   isAdopt Boolean @default(false)
@@ -124,6 +123,7 @@ model Pet {
 }
 model Adoption {
   id String @id @default(uuid())
+  adoptionStatus PetAdoptStatus @default(PENDING)
   petId String @unique
   pet Pet @relation(fields: [petId], references: [id])
   adopterId String

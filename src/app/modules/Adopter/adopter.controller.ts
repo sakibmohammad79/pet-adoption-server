@@ -66,9 +66,8 @@ const softDeleteAdopter: RequestHandler = catchAsync(async (req, res, next) => {
 });
 const petBooked: RequestHandler = catchAsync(
   async (req: Request & { user?: any }, res, next) => {
-    const { id } = req.params;
-    const user = req.user;
-    const result = await AdopterService.petBookedIntoDB(id, user);
+    const { petId, adopterId } = req.body;
+    const result = await AdopterService.petBookedIntoDB(petId, adopterId);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,

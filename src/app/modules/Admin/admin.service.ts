@@ -1,4 +1,4 @@
-import { Admin, Prisma, UserStatus } from "@prisma/client";
+import { Admin, PetAdoptStatus, Prisma, UserStatus } from "@prisma/client";
 
 import { adminSearchableFields } from "./admin.constant";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
@@ -241,6 +241,34 @@ const petPublishIntoDB = async (id: string, user: any) => {
   return publishedPet;
 };
 
+const approveAdoption = async (adoptionId: string) => {
+  // Find the adoption request
+  const adoption = await prisma.adoption.findUnique({
+    where: { id: adoptionId },
+    include: { pet: true },
+  });
+
+  if (!adoption) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Pet adoption not found.");
+  }
+
+  // Update the adoption status to approved
+  const updateAdoption = await prisma.adoption.update({
+    where: { id: adoptionId },
+    data: { adoptionStatus: PetAdoptStatus.APPROVED },
+  });
+
+  if (updateAdoption.adoptionStatus === PetAdoptStatus.APPROVED) {
+    // Mark the pet as adopted and update the adoption status
+    const updatedPet = await prisma.pet.update({
+      where: { id: adoption.petId },
+      data: { isAdopt: true, isBooked: false, isPublished: false }, // Mark as adopted, unpublish from homepage
+    });
+  }
+
+  return updateAdoption;
+};
+
 export const AdminServices = {
   getAllAdminFromDB,
   getSingleAdminById,
@@ -248,4 +276,5 @@ export const AdminServices = {
   deleteAdminFromDB,
   softDeleteAdminFromDB,
   petPublishIntoDB,
+  approveAdoption,
 };

@@ -33,4 +33,10 @@ router.patch(
   Guard(UserRole.ADMIN),
   AdminController.petPublish
 );
+router.patch(
+  "/pet-adoption/:id",
+  Guard(UserRole.ADMIN),
+  AdminController.approveAdoption
+);
+
 export const AdminRoutes = router;

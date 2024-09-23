@@ -193,25 +193,26 @@ const softDeleteAdopterFromDB = async (id: string): Promise<Adopter | null> => {
   return result;
 };
 
-const petBookedIntoDB = async (id: string, user: any) => {
-  const userData = await prisma.user.findUniqueOrThrow({
+const petBookedIntoDB = async (petId: string, adopterId: string) => {
+  console.log(petId, adopterId);
+  const adopter = await prisma.adopter.findUniqueOrThrow({
     where: {
-      id: user.userId,
+      id: adopterId,
+      isDeleted: false,
+    },
+  });
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      email: adopter.email,
       status: UserStatus.ACTIVE,
     },
   });
-  await prisma.adopter.findUniqueOrThrow({
-    where: {
-      email: userData?.email,
-      isDeleted: false,
-    },
-  });
+
   const pet = await prisma.pet.findUniqueOrThrow({
     where: {
-      id,
+      id: petId,
       isDeleted: false,
       isPublished: true,
-      status: PetAdoptStatus.PENDING,
     },
   });
 
@@ -230,6 +231,15 @@ const petBookedIntoDB = async (id: string, user: any) => {
       isBooked: true,
     },
   });
+
+  // Create the booking request (pending approval from admin)
+  await prisma.adoption.create({
+    data: {
+      petId: bookedPet.id,
+      adopterId: adopter.id,
+    },
+  });
+
   return bookedPet;
 };
 

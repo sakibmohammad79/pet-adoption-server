@@ -81,6 +81,18 @@ const petPublish: RequestHandler = catchAsync(
     });
   }
 );
+const approveAdoption: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const result = await AdminServices.approveAdoption(id);
+
+  sendResponse(res, {
+    statusCode: statusCodes.OK,
+    success: true,
+    message: "Your adoption approved!",
+    data: result,
+  });
+});
 
 export const AdminController = {
   getAllAdmin,
@@ -89,4 +101,5 @@ export const AdminController = {
   deleteAdmin,
   softDeleteAdmin,
   petPublish,
+  approveAdoption,
 };
