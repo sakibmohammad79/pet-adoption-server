@@ -16,6 +16,12 @@ router.get(
   PublisherController.getSinglePublisher
 );
 
+router.get(
+  "/pet/:id",
+  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),
+  PublisherController.myAllCreatedPet
+);
+
 router.patch(
   "/:id",
   Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),

@@ -27,4 +27,10 @@ router.delete(
   AdopterController.softDeleteAdopter
 );
 
+router.patch(
+  "/pet-booked/:id",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.petBooked
+);
+
 export const AdopterRoutes = router;

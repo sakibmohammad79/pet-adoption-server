@@ -1,10 +1,11 @@
-import { Adopter, Prisma, UserStatus } from "@prisma/client";
+import { Adopter, PetAdoptStatus, Prisma, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
-import { adopterSearchableFields } from "./Adopter.constant";
+
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
+import { adopterSearchableFields } from "./adopter.constant";
 
 const getAllAdopterFromDB = async (
   params: any,
@@ -192,10 +193,51 @@ const softDeleteAdopterFromDB = async (id: string): Promise<Adopter | null> => {
   return result;
 };
 
+const petBookedIntoDB = async (id: string, user: any) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  await prisma.adopter.findUniqueOrThrow({
+    where: {
+      email: userData?.email,
+      isDeleted: false,
+    },
+  });
+  const pet = await prisma.pet.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+      isPublished: true,
+      status: PetAdoptStatus.PENDING,
+    },
+  });
+
+  if (pet.isAdopt || pet.isBooked) {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      "This pet is either already adopted or booked!"
+    );
+  }
+
+  const bookedPet = await prisma.pet.update({
+    where: {
+      id: pet.id,
+    },
+    data: {
+      isBooked: true,
+    },
+  });
+  return bookedPet;
+};
+
 export const AdopterService = {
   getAllAdopterFromDB,
   getSingleAdopterById,
   updateAdopterIntoDB,
   deleteAdopterFromDB,
   softDeleteAdopterFromDB,
+  petBookedIntoDB,
 };

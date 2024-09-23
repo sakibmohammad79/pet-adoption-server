@@ -197,10 +197,43 @@ const softDeletePublisherFromDB = async (
   return result;
 };
 
+const getAllMyCreatedPet = async (id: string) => {
+  const publisher = await prisma.publisher.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: publisher.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
+  const myCreatedPet = await prisma.pet.findMany({
+    where: {
+      publisherId: publisher.id,
+    },
+    // include: {
+    //   publisher: true,
+    // },
+  });
+
+  return myCreatedPet;
+};
+
 export const PublisherService = {
   getSinglePublisherById,
   getAllPublisherFromDB,
   updatePublisherIntoDB,
   deletePublisherFromDB,
   softDeletePublisherFromDB,
+  getAllMyCreatedPet,
 };

@@ -28,4 +28,9 @@ router.delete(
   AdminController.softDeleteAdmin
 );
 
+router.patch(
+  "/pet-publish/:id",
+  Guard(UserRole.ADMIN),
+  AdminController.petPublish
+);
 export const AdminRoutes = router;

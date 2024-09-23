@@ -68,6 +68,16 @@ const softDeletePublisher: RequestHandler = catchAsync(
     });
   }
 );
+const myAllCreatedPet: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await PublisherService.getAllMyCreatedPet(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "My all created pet fetched successfully!",
+    data: result,
+  });
+});
 
 export const PublisherController = {
   getSinglePublisher,
@@ -75,4 +85,5 @@ export const PublisherController = {
   updatePublisher,
   deletePublisher,
   softDeletePublisher,
+  myAllCreatedPet,
 };

@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import { AdminServices } from "./admin.service";
 import statusCodes from "http-status-codes";
 import { pick } from "../../../shared/pick";
@@ -67,6 +67,20 @@ const softDeleteAdmin: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const petPublish: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await AdminServices.petPublishIntoDB(id, user);
+
+    sendResponse(res, {
+      statusCode: statusCodes.OK,
+      success: true,
+      message: "Pet published successfully!",
+      data: result,
+    });
+  }
+);
 
 export const AdminController = {
   getAllAdmin,
@@ -74,4 +88,5 @@ export const AdminController = {
   updateAdmin,
   deleteAdmin,
   softDeleteAdmin,
+  petPublish,
 };

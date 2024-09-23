@@ -1,10 +1,10 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import { pick } from "../../../shared/pick";
-import { adopterFilterableFields } from "./Adopter.constant";
-import { AdopterService } from "./Adopter.service";
 import { sendResponse } from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
+import { adopterFilterableFields } from "./adopter.constant";
+import { AdopterService } from "./adopter.service";
 
 const getAllPublisher: RequestHandler = catchAsync(async (req, res) => {
   const filters = pick(req.query, adopterFilterableFields);
@@ -64,6 +64,19 @@ const softDeleteAdopter: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const petBooked: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await AdopterService.petBookedIntoDB(id, user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Pet booked successfully!",
+      data: result,
+    });
+  }
+);
 
 export const AdopterController = {
   getAllPublisher,
@@ -71,4 +84,5 @@ export const AdopterController = {
   updateAdopter,
   deleteAdopter,
   softDeleteAdopter,
+  petBooked,
 };

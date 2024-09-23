@@ -211,10 +211,41 @@ const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   return result;
 };
 
+const petPublishIntoDB = async (id: string, user: any) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      email: userData?.email,
+      isDeleted: false,
+    },
+  });
+  const pet = await prisma.pet.findFirstOrThrow({
+    where: {
+      id,
+    },
+  });
+  const publishedPet = await prisma.pet.update({
+    where: {
+      id: pet.id,
+      isPublished: false,
+    },
+    data: {
+      isPublished: true,
+    },
+  });
+  return publishedPet;
+};
+
 export const AdminServices = {
   getAllAdminFromDB,
   getSingleAdminById,
   updateAdminIntoDB,
   deleteAdminFromDB,
   softDeleteAdminFromDB,
+  petPublishIntoDB,
 };
