@@ -134,17 +134,18 @@ model Adoption {
 }
 
 model Review {
-  id String @id @default(uuid())
-  rating Int
-  comment String?
-  reviewerId String
-  
- adopter Adopter? @relation(fields: [reviewerId], references: [id], map: "adopter_review_fkey")
+  id             String    @id @default(uuid())
+  rating         Int       
+  comment        String
+  adopterId      String?   // Nullable
+  publisherId    String?   // Nullable
 
-  publisher Publisher? @relation(fields: [reviewerId], references: [id], map: "publisher_review_fkey")
+  // Relationships
+  adopter        Adopter?  @relation(fields: [adopterId], references: [id])
+  publisher      Publisher? @relation(fields: [publisherId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 enum HealthStatus {

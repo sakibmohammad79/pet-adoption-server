@@ -4,38 +4,40 @@ import ApiError from "../app/error/ApiError";
 import { StatusCodes } from "http-status-codes";
 
 export const checkIsDeleted = async (email: string, role: string) => {
+  let userProfileData = null;
   if (role === UserRole.ADMIN) {
-    const admin = await prisma.admin.findUnique({
+    userProfileData = await prisma.admin.findUnique({
       where: {
         email: email,
         isDeleted: false,
       },
     });
-    if (!admin) {
+    if (!userProfileData) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
     }
   }
 
   if (role === UserRole.PET_ADOPTER) {
-    const adopter = await prisma.adopter.findUnique({
+    userProfileData = await prisma.adopter.findUnique({
       where: {
         email: email,
         isDeleted: false,
       },
     });
-    if (!adopter) {
+    if (!userProfileData) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
     }
   }
   if (role === UserRole.PET_PUBLISHER) {
-    const publisher = await prisma.publisher.findUnique({
+    userProfileData = await prisma.publisher.findUnique({
       where: {
         email: email,
         isDeleted: false,
       },
     });
-    if (!publisher) {
+    if (!userProfileData) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unautorized!");
     }
   }
+  return userProfileData;
 };

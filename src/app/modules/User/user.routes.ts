@@ -4,7 +4,6 @@ import { UserValidationSchema } from "./user.validation";
 import { UserRole } from "@prisma/client";
 import Guard from "../../middleware/guard";
 import { imageUploader } from "../../../helpers/imageUploader";
-import { UserServices } from "./user.service";
 import { validateRequest } from "../../middleware/validateRequest";
 
 const router = Router();
