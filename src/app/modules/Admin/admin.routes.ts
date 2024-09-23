@@ -9,6 +9,12 @@ import Guard from "../../middleware/guard";
 
 const router = Router();
 
+router.get(
+  "/adoption-request",
+  Guard(UserRole.ADMIN),
+  AdminController.allAdoptionRequest
+);
+
 router.get("/", Guard(UserRole.ADMIN), AdminController.getAllAdmin);
 
 router.get("/:id", Guard(UserRole.ADMIN), AdminController.getSingleAdmin);
@@ -34,9 +40,15 @@ router.patch(
   AdminController.petPublish
 );
 router.patch(
-  "/pet-adoption/:id",
+  "/pet-adoption-approved/:id",
   Guard(UserRole.ADMIN),
   AdminController.approveAdoption
+);
+
+router.patch(
+  "/pet-adoption-rejected/:id",
+  Guard(UserRole.ADMIN),
+  AdminController.rejectAdoption
 );
 
 export const AdminRoutes = router;

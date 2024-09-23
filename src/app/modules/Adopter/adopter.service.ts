@@ -194,7 +194,6 @@ const softDeleteAdopterFromDB = async (id: string): Promise<Adopter | null> => {
 };
 
 const petBookedIntoDB = async (petId: string, adopterId: string) => {
-  console.log(petId, adopterId);
   const adopter = await prisma.adopter.findUniqueOrThrow({
     where: {
       id: adopterId,
@@ -213,6 +212,7 @@ const petBookedIntoDB = async (petId: string, adopterId: string) => {
       id: petId,
       isDeleted: false,
       isPublished: true,
+      isBooked: false,
     },
   });
 

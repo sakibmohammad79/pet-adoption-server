@@ -252,6 +252,10 @@ const approveAdoption = async (adoptionId: string) => {
     throw new ApiError(StatusCodes.NOT_FOUND, "Pet adoption not found.");
   }
 
+  if (adoption.adoptionStatus === PetAdoptStatus.APPROVED) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "The pet already adopted!.");
+  }
+
   // Update the adoption status to approved
   const updateAdoption = await prisma.adoption.update({
     where: { id: adoptionId },
@@ -268,6 +272,55 @@ const approveAdoption = async (adoptionId: string) => {
 
   return updateAdoption;
 };
+const rejectAdoption = async (adoptionId: string) => {
+  // Find the adoption request
+  const adoption = await prisma.adoption.findUnique({
+    where: { id: adoptionId, adoptionStatus: PetAdoptStatus.PENDING },
+    include: { pet: true },
+  });
+
+  if (!adoption) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Pet adoption not found.");
+  }
+
+  if (adoption.adoptionStatus === PetAdoptStatus.APPROVED) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "The pet already adopted!.");
+  }
+
+  // Update the adoption status to approved
+  const updateAdoption = await prisma.adoption.update({
+    where: { id: adoptionId },
+    data: { adoptionStatus: PetAdoptStatus.PENDING },
+  });
+
+  if (updateAdoption.adoptionStatus === PetAdoptStatus.PENDING) {
+    // Mark the pet as adopted and update the adoption status
+    const updatedPet = await prisma.pet.update({
+      where: { id: adoption.petId },
+      data: { isAdopt: false, isBooked: false, isPublished: true }, // Mark as adopted, unpublish from homepage
+    });
+  }
+
+  return updateAdoption;
+};
+
+const getAllAdoptionRequest = async (user: any) => {
+  console.log(user);
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      email: userData?.email,
+      isDeleted: false,
+    },
+  });
+  const allAdoptionRequest = await prisma.adoption.findMany();
+  return allAdoptionRequest;
+};
 
 export const AdminServices = {
   getAllAdminFromDB,
@@ -277,4 +330,6 @@ export const AdminServices = {
   softDeleteAdminFromDB,
   petPublishIntoDB,
   approveAdoption,
+  rejectAdoption,
+  getAllAdoptionRequest,
 };

@@ -83,9 +83,7 @@ const petPublish: RequestHandler = catchAsync(
 );
 const approveAdoption: RequestHandler = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-
   const result = await AdminServices.approveAdoption(id);
-
   sendResponse(res, {
     statusCode: statusCodes.OK,
     success: true,
@@ -93,6 +91,29 @@ const approveAdoption: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const rejectAdoption: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await AdminServices.rejectAdoption(id);
+  sendResponse(res, {
+    statusCode: statusCodes.OK,
+    success: true,
+    message: "Your adoption request rejected!",
+    data: result,
+  });
+});
+const allAdoptionRequest: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const user = req.user;
+    console.log(user);
+    const result = await AdminServices.getAllAdoptionRequest(user);
+    sendResponse(res, {
+      statusCode: statusCodes.OK,
+      success: true,
+      message: "All Adoption Request fetched!",
+      data: result,
+    });
+  }
+);
 
 export const AdminController = {
   getAllAdmin,
@@ -102,4 +123,6 @@ export const AdminController = {
   softDeleteAdmin,
   petPublish,
   approveAdoption,
+  rejectAdoption,
+  allAdoptionRequest,
 };
