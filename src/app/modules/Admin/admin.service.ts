@@ -182,6 +182,7 @@ const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   });
   return result;
 };
+
 const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   const admin = await prisma.admin.findUniqueOrThrow({
     where: {
@@ -240,6 +241,38 @@ const petPublishIntoDB = async (id: string, user: any) => {
   });
   return publishedPet;
 };
+const petUnpublishIntoDB = async (id: string, user: any) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      email: userData?.email,
+      isDeleted: false,
+    },
+  });
+  const pet = await prisma.pet.findFirstOrThrow({
+    where: {
+      id,
+      isBooked: false,
+      isAdopt: false,
+      isPublished: true,
+      isDeleted: false,
+    },
+  });
+  const unpublishedPet = await prisma.pet.update({
+    where: {
+      id: pet.id,
+    },
+    data: {
+      isPublished: false,
+    },
+  });
+  return unpublishedPet;
+};
 
 const approveAdoption = async (adoptionId: string) => {
   // Find the adoption request
@@ -272,6 +305,7 @@ const approveAdoption = async (adoptionId: string) => {
 
   return updateAdoption;
 };
+
 const rejectAdoption = async (adoptionId: string) => {
   // Find the adoption request
   const adoption = await prisma.adoption.findUnique({
@@ -329,6 +363,7 @@ export const AdminServices = {
   deleteAdminFromDB,
   softDeleteAdminFromDB,
   petPublishIntoDB,
+  petUnpublishIntoDB,
   approveAdoption,
   rejectAdoption,
   getAllAdoptionRequest,

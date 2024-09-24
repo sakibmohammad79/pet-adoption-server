@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import { UserServices } from "./user.service";
 import { StatusCodes } from "http-status-codes";
 import { sendResponse } from "../../../shared/sendResponse";

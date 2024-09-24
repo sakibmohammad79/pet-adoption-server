@@ -1,4 +1,11 @@
-import { Admin, Adopter, Prisma, Publisher, UserRole } from "@prisma/client";
+import {
+  Admin,
+  Adopter,
+  Prisma,
+  Publisher,
+  UserRole,
+  UserStatus,
+} from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 import { imageUploader } from "../../../helpers/imageUploader";
@@ -8,7 +15,27 @@ import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { userSearchableFields } from "./user.constant";
 
-const createAdminIntoDB = async (req: Request): Promise<Admin> => {
+const createAdminIntoDB = async (
+  req: Request & { user?: any }
+): Promise<Admin> => {
+  //do not strong validate because we are use refresh token
+
+  // const user = req.user;
+  // const isActiveUser = await prisma.user.findUnique({
+  //   where: {
+  //     id: user.userId,
+  //     status: UserStatus.ACTIVE,
+  //   },
+  // });
+  // if (!isActiveUser) {
+  //   throw new ApiError(
+  //     StatusCodes.UNAUTHORIZED,
+  //     "This user blocked or deleted by admin!"
+  //   );
+  // }
+  // if (isActiveUser.email && isActiveUser.role) {
+  //   await checkIsDeleted(isActiveUser.email, isActiveUser.role);
+  // }
   const file = req.file as IFile;
 
   if (file) {
@@ -38,6 +65,7 @@ const createAdminIntoDB = async (req: Request): Promise<Admin> => {
 
   return result;
 };
+
 const createPetPublisherIntoDB = async (req: Request): Promise<Publisher> => {
   const file = req.file as IFile;
 
@@ -68,6 +96,7 @@ const createPetPublisherIntoDB = async (req: Request): Promise<Publisher> => {
 
   return result;
 };
+
 const createPetAdopterIntoDB = async (req: Request): Promise<Adopter> => {
   const file = req.file as IFile;
 

@@ -10,7 +10,6 @@ const getAllAdmin: RequestHandler = catchAsync(async (req, res) => {
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
   const result = await AdminServices.getAllAdminFromDB(filters, options);
-
   sendResponse(res, {
     statusCode: statusCodes.OK,
     success: true,
@@ -72,11 +71,23 @@ const petPublish: RequestHandler = catchAsync(
     const { id } = req.params;
     const user = req.user;
     const result = await AdminServices.petPublishIntoDB(id, user);
-
     sendResponse(res, {
       statusCode: statusCodes.OK,
       success: true,
       message: "Pet published successfully!",
+      data: result,
+    });
+  }
+);
+const petUnpublish: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await AdminServices.petUnpublishIntoDB(id, user);
+    sendResponse(res, {
+      statusCode: statusCodes.OK,
+      success: true,
+      message: "Pet unpublished successfully!",
       data: result,
     });
   }
@@ -122,6 +133,7 @@ export const AdminController = {
   deleteAdmin,
   softDeleteAdmin,
   petPublish,
+  petUnpublish,
   approveAdoption,
   rejectAdoption,
   allAdoptionRequest,

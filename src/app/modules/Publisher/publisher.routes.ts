@@ -10,11 +10,7 @@ const router = Router();
 //all access just see the all publisher
 router.get("/", PublisherController.getAllPublisher);
 
-router.get(
-  "/:id",
-  Guard(UserRole.ADMIN),
-  PublisherController.getSinglePublisher
-);
+router.get("/:id", PublisherController.getSinglePublisher);
 
 router.get(
   "/pet/:id",

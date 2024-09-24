@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { adopterFilterableFields } from "./adopter.constant";
 import { AdopterService } from "./adopter.service";
 
-const getAllPublisher: RequestHandler = catchAsync(async (req, res) => {
+const getAllAdopter: RequestHandler = catchAsync(async (req, res) => {
   const filters = pick(req.query, adopterFilterableFields);
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
   const result = await AdopterService.getAllAdopterFromDB(filters, options);
@@ -91,7 +91,7 @@ const myAdopterPet: RequestHandler = catchAsync(
 );
 
 export const AdopterController = {
-  getAllPublisher,
+  getAllAdopter,
   getSingleAdopter,
   updateAdopter,
   deleteAdopter,

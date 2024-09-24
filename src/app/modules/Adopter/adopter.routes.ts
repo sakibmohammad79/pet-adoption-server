@@ -7,26 +7,14 @@ import { adopterValidationSchema } from "./adopter.validation";
 
 const router = Router();
 
-router.patch(
-  "/pet-booked",
-  Guard(UserRole.PET_ADOPTER),
-  AdopterController.petBooked
-);
-
 //all access just see the all publisher
-router.get("/", AdopterController.getAllPublisher);
+router.get("/", AdopterController.getAllAdopter);
 
-router.get(
-  "/adopt-pet/:id",
-  Guard(UserRole.PET_ADOPTER),
-  AdopterController.myAdopterPet
-);
-
-router.get("/:id", Guard(UserRole.ADMIN), AdopterController.getSingleAdopter);
+router.get("/:id", AdopterController.getSingleAdopter);
 
 router.patch(
   "/:id",
-  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),
+  Guard(UserRole.ADMIN, UserRole.ADMIN),
   validateRequest(adopterValidationSchema.updateAdopterValidationSchema),
   AdopterController.updateAdopter
 );
@@ -37,6 +25,18 @@ router.delete(
   "/soft/:id",
   Guard(UserRole.ADMIN),
   AdopterController.softDeleteAdopter
+);
+
+router.patch(
+  "/pet-booked",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.petBooked
+);
+
+router.get(
+  "/adopt-pet/:id",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.myAdopterPet
 );
 
 export const AdopterRoutes = router;

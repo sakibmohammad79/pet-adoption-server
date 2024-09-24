@@ -21,6 +21,7 @@ router.post(
     return UserController.createAdmin(req, res, next);
   }
 );
+
 router.post(
   "/create-publisher",
   imageUploader.upload.single("file"),
