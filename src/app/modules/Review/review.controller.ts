@@ -16,7 +16,32 @@ const createReview: RequestHandler = catchAsync(
     });
   }
 );
+const getAllReview: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const result = await ReviewService.getAllReview();
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "All review fetched successfully!",
+      data: result,
+    });
+  }
+);
+const deleteReview: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const result = await ReviewService.deleteReview(id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Review delete successfully!",
+      data: result,
+    });
+  }
+);
 
 export const ReviewController = {
   createReview,
+  getAllReview,
+  deleteReview,
 };

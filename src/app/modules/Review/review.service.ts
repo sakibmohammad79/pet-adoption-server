@@ -51,10 +51,37 @@ const createReviewIntoDB = async (data: IReview, user: any) => {
       },
     });
   }
-
   return reviewerData;
+};
+
+const getAllReview = async () => {
+  const allReview = await prisma.review.findMany({
+    include: {
+      publisher: true,
+      adopter: true,
+    },
+  });
+  return allReview;
+};
+
+const deleteReview = async (id: string) => {
+  const review = await prisma.review.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const deleteReview = await prisma.review.delete({
+    where: {
+      id: review.id,
+    },
+  });
+
+  return deleteReview;
 };
 
 export const ReviewService = {
   createReviewIntoDB,
+  getAllReview,
+  deleteReview,
 };
