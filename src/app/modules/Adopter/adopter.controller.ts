@@ -77,6 +77,19 @@ const petBooked: RequestHandler = catchAsync(
   }
 );
 
+const myAdopterPet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const result = await AdopterService.getAllMyAdopterPet(id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "My adopt pet fetched successfully!",
+      data: result,
+    });
+  }
+);
+
 export const AdopterController = {
   getAllPublisher,
   getSingleAdopter,
@@ -84,4 +97,5 @@ export const AdopterController = {
   deleteAdopter,
   softDeleteAdopter,
   petBooked,
+  myAdopterPet,
 };

@@ -16,6 +16,12 @@ router.patch(
 //all access just see the all publisher
 router.get("/", AdopterController.getAllPublisher);
 
+router.get(
+  "/adopt-pet/:id",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.myAdopterPet
+);
+
 router.get("/:id", Guard(UserRole.ADMIN), AdopterController.getSingleAdopter);
 
 router.patch(
