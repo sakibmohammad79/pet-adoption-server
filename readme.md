@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pet Adoption Project - Backend</title>
 </head>
 <body>
 
@@ -39,14 +38,14 @@
       <pre><code>cd pet-adoption-server</code></pre>
     </li>
     <li>Install dependencies:
-      <pre><code>npm install</code></pre>
+      <pre><code>yarn install</code></pre>
     </li>
-    <li>Set up environment variables by creating a <code>.env</code> file with the necessary configuration such as database URL.</li>
+    <li>Set up environment variables by creating a <code>.env</code> file with the necessary configuration such as the database URL.</li>
     <li>Run database migrations:
       <pre><code>npx prisma migrate dev</code></pre>
     </li>
     <li>Start the server:
-      <pre><code>npm run dev</code></pre>
+      <pre><code>yarn dev</code></pre>
     </li>
   </ol>
 
@@ -56,4 +55,15 @@
     <li><strong>POST /pets</strong> - Create a new pet</li>
     <li><strong>PUT /pets/:id</strong> - Update pet information</li>
     <li><strong>DELETE /pets/:id</strong> - Soft delete a pet</li>
-    <li><strong>POST /adoptions
+    <li><strong>POST /adoptions</strong> - Request pet adoption</li>
+    <li><strong>PUT /adoptions/:id/accept</strong> - Admin accepts adoption</li>
+  </ul>
+
+  <h2>Contributing</h2>
+  <p>Feel free to fork this repository and submit pull requests for any enhancements or bug fixes.</p>
+
+  <h2>License</h2>
+  <p>This project is licensed under the MIT License.</p>
+
+</body>
+</html>
