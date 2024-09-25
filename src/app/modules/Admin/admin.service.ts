@@ -8,6 +8,7 @@ import { IPaginationOptions } from "../../../interface/pagination";
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
 import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
+import emailSender from "../Auth/emialSender";
 
 const getAllAdminFromDB = async (
   params: IAdminFilterRequest,
@@ -225,22 +226,61 @@ const petPublishIntoDB = async (id: string, user: any) => {
       isDeleted: false,
     },
   });
-  const pet = await prisma.pet.findFirstOrThrow({
+  const pet = await prisma.pet.findUnique({
     where: {
       id,
+      isPublished: true,
     },
   });
+
+  if (pet) {
+    throw new ApiError(StatusCodes.CONFLICT, "This pet already published!");
+  }
+
   const publishedPet = await prisma.pet.update({
     where: {
-      id: pet.id,
+      id,
       isPublished: false,
     },
     data: {
       isPublished: true,
     },
   });
+
+  const publisher = await prisma.publisher.findFirstOrThrow({
+    where: {
+      id: publishedPet.publisherId,
+    },
+  });
+
+  if (publishedPet.isPublished) {
+    await emailSender(
+      publisher.email,
+      "Pet Published ✔",
+      `<body style="font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <div style="text-align: center; padding-bottom: 20px;">
+      <h2 style="color: #4CAF50; font-size: 24px; margin: 0;">Congratulations!</h2>
+      <p style="font-size: 16px; color: #555;">Your pet has been successfully published on our platform.</p>
+    </div>
+    <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+      <p style="font-size: 16px; color: #333;">Dear <strong>Publisher</strong>,</p>
+      <p style="font-size: 16px; color: #333;">We are excited to inform you that your pet, <strong>${publishedPet.name}</strong>, has been successfully published on our platform. Potential adopters will now be able to view your pet and consider adopting them.</p>
+      <p style="font-size: 16px; color: #333;">Thank you for being a part of our community and helping pets find loving homes!</p>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="https://yourwebsite.com" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">View Your Published Pets</a>
+    </div>
+    <div style="margin-top: 40px; text-align: center; font-size: 14px; color: #999;">
+      <p>&copy; 2024 Pet Adoption Platform. All rights reserved.</p>
+    </div>
+  </div>
+</body>`
+    );
+  }
   return publishedPet;
 };
+
 const petUnpublishIntoDB = async (id: string, user: any) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
@@ -271,6 +311,38 @@ const petUnpublishIntoDB = async (id: string, user: any) => {
       isPublished: false,
     },
   });
+
+  const publisher = await prisma.publisher.findFirstOrThrow({
+    where: {
+      id: unpublishedPet.publisherId,
+    },
+  });
+
+  if (!unpublishedPet.isPublished) {
+    await emailSender(
+      publisher.email,
+      "Pet Unpublished",
+      `<body style="font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <div style="text-align: center; padding-bottom: 20px;">
+          <h2 style="color: #FF4C4C; font-size: 24px; margin: 0;">Important Notice!</h2>
+          <p style="font-size: 16px; color: #555;">Your pet listing has been unpublished.</p>
+        </div>
+        <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+          <p style="font-size: 16px; color: #333;">Dear <strong>Publisher</strong>,</p>
+          <p style="font-size: 16px; color: #333;">We wanted to inform you that your pet, <strong>${unpublishedPet.name}</strong>, has been unpublished from our platform. This means that it will no longer be visible to potential adopters.</p>
+          <p style="font-size: 16px; color: #333;">If you have any questions or would like to republish your pet, please feel free to contact us or visit your dashboard.</p>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="https://yourwebsite.com" style="display: inline-block; padding: 10px 20px; background-color: #FF4C4C; color: #fff; text-decoration: none; border-radius: 5px;">View Your Dashboard</a>
+        </div>
+        <div style="margin-top: 40px; text-align: center; font-size: 14px; color: #999;">
+          <p>&copy; 2024 Pet Adoption Platform. All rights reserved.</p>
+        </div>
+      </div>
+    </body>`
+    );
+  }
   return unpublishedPet;
 };
 

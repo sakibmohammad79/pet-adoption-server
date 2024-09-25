@@ -155,6 +155,7 @@ const forgotPassword = async (payload: { email: string }) => {
 
   await emailSender(
     user.email,
+    "Reset Password ✔",
     `<div>
         <h2>Reset Your Password</h2>
         <p>Click the button below to reset your password:</p>

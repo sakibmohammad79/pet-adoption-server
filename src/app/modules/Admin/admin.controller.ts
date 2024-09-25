@@ -82,6 +82,7 @@ const petPublish: RequestHandler = catchAsync(
 const petUnpublish: RequestHandler = catchAsync(
   async (req: Request & { user?: any }, res, next) => {
     const { id } = req.params;
+
     const user = req.user;
     const result = await AdminServices.petUnpublishIntoDB(id, user);
     sendResponse(res, {
