@@ -12,6 +12,18 @@ router.get("/", AdopterController.getAllAdopter);
 
 router.get("/:id", AdopterController.getSingleAdopter);
 
+router.get(
+  "/adopt-pet/:id",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.myAdopterPet
+);
+
+router.patch(
+  "/pet-booked",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.petBooked
+);
+
 router.patch(
   "/:id",
   Guard(UserRole.ADMIN, UserRole.ADMIN),
@@ -25,18 +37,6 @@ router.delete(
   "/soft/:id",
   Guard(UserRole.ADMIN),
   AdopterController.softDeleteAdopter
-);
-
-router.patch(
-  "/pet-booked",
-  Guard(UserRole.PET_ADOPTER),
-  AdopterController.petBooked
-);
-
-router.get(
-  "/adopt-pet/:id",
-  Guard(UserRole.PET_ADOPTER),
-  AdopterController.myAdopterPet
 );
 
 export const AdopterRoutes = router;

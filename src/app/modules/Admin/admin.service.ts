@@ -367,12 +367,44 @@ const approveAdoption = async (adoptionId: string) => {
     data: { adoptionStatus: PetAdoptStatus.APPROVED },
   });
 
+  const adopter = await prisma.adopter.findUniqueOrThrow({
+    where: {
+      id: updateAdoption.adopterId,
+    },
+  });
+
   if (updateAdoption.adoptionStatus === PetAdoptStatus.APPROVED) {
     // Mark the pet as adopted and update the adoption status
     const updatedPet = await prisma.pet.update({
       where: { id: adoption.petId },
       data: { isAdopt: true, isBooked: false, isPublished: false }, // Mark as adopted, unpublish from homepage
     });
+    if (updatedPet.isAdopt) {
+      await emailSender(
+        adopter?.email,
+        "Adoption Approved",
+        `<body style="font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; padding-bottom: 20px;">
+        <h2 style="color: #4CAF50; font-size: 24px; margin: 0;">Adoption Approved!</h2>
+        <p style="font-size: 16px; color: #555;">Your adoption request has been approved!</p>
+      </div>
+      <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+        <p style="font-size: 16px; color: #333;">Dear <strong>${adopter.firstName}</strong>,</p>
+        <p style="font-size: 16px; color: #333;">We are delighted to inform you that your adoption request for <strong>${updatedPet.name}</strong> has been approved by our admin. Congratulations on your new furry friend!</p>
+        <p style="font-size: 16px; color: #333;">You can now access <strong>${updatedPet.name}</strong>'s details in your profile and begin the next steps for adoption.</p>
+        <p style="font-size: 16px; color: #333;">Thank you for giving <strong>${updatedPet.name}</strong> a loving home!</p>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="https://yourwebsite.com" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">View Your Pet Profile</a>
+      </div>
+      <div style="margin-top: 40px; text-align: center; font-size: 14px; color: #999;">
+        <p>&copy; 2024 Pet Adoption Platform. All rights reserved.</p>
+      </div>
+    </div>
+  </body>`
+      );
+    }
   }
 
   return updateAdoption;
@@ -411,13 +443,13 @@ const rejectAdoption = async (adoptionId: string) => {
 };
 
 const getAllAdoptionRequest = async (user: any) => {
-  console.log(user);
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       id: user.userId,
       status: UserStatus.ACTIVE,
     },
   });
+
   await prisma.admin.findUniqueOrThrow({
     where: {
       email: userData?.email,

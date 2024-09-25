@@ -9,15 +9,14 @@ import Guard from "../../middleware/guard";
 
 const router = Router();
 
-router.get("/", Guard(UserRole.ADMIN), AdminController.getAllAdmin);
-
-router.get("/:id", Guard(UserRole.ADMIN), AdminController.getSingleAdmin);
-
 router.get(
   "/adoption-request",
   Guard(UserRole.ADMIN),
   AdminController.allAdoptionRequest
 );
+router.get("/", Guard(UserRole.ADMIN), AdminController.getAllAdmin);
+
+router.get("/:id", Guard(UserRole.ADMIN), AdminController.getSingleAdmin);
 
 router.patch(
   "/:id",

@@ -6,6 +6,7 @@ import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import ApiError from "../../error/ApiError";
 import { StatusCodes } from "http-status-codes";
 import { adopterSearchableFields } from "./adopter.constant";
+import emailSender from "../Auth/emialSender";
 
 const getAllAdopterFromDB = async (
   params: any,
@@ -211,8 +212,6 @@ const petBookedIntoDB = async (petId: string, adopterId: string) => {
     where: {
       id: petId,
       isDeleted: false,
-      isPublished: true,
-      isBooked: false,
     },
   });
 
@@ -226,11 +225,38 @@ const petBookedIntoDB = async (petId: string, adopterId: string) => {
   const bookedPet = await prisma.pet.update({
     where: {
       id: pet.id,
+      isBooked: false,
     },
     data: {
       isBooked: true,
     },
   });
+
+  if (bookedPet.isBooked) {
+    await emailSender(
+      adopter.email,
+      "Pet Booked",
+      `<body style="font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; padding-bottom: 20px;">
+        <h2 style="color: #4CAF50; font-size: 24px; margin: 0;">Pet Booking Confirmed!</h2>
+        <p style="font-size: 16px; color: #555;">You've successfully booked your pet!</p>
+      </div>
+      <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+        <p style="font-size: 16px; color: #333;">Dear <strong>${adopter.firstName}</strong>,</p>
+        <p style="font-size: 16px; color: #333;">We are thrilled to inform you that you've successfully booked <strong>${bookedPet.name}</strong> for adoption. Your request has been sent to the admin for approval. Once the admin approves your request, the adoption process will proceed.</p>
+        <p style="font-size: 16px; color: #333;">Thank you for choosing to give a pet a loving home!</p>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="https://yourwebsite.com" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">View Your Bookings</a>
+      </div>
+      <div style="margin-top: 40px; text-align: center; font-size: 14px; color: #999;">
+        <p>&copy; 2024 Pet Adoption Platform. All rights reserved.</p>
+      </div>
+    </div>
+  </body>`
+    );
+  }
 
   // Create the booking request (pending approval from admin)
   await prisma.adoption.create({
@@ -240,7 +266,7 @@ const petBookedIntoDB = async (petId: string, adopterId: string) => {
     },
   });
 
-  return bookedPet;
+  return petBookedIntoDB;
 };
 
 const getAllMyAdopterPet = async (id: string) => {

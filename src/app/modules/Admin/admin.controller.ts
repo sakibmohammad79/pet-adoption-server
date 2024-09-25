@@ -116,7 +116,7 @@ const rejectAdoption: RequestHandler = catchAsync(async (req, res, next) => {
 const allAdoptionRequest: RequestHandler = catchAsync(
   async (req: Request & { user?: any }, res, next) => {
     const user = req.user;
-    console.log(user);
+
     const result = await AdminServices.getAllAdoptionRequest(user);
     sendResponse(res, {
       statusCode: statusCodes.OK,
