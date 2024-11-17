@@ -14,28 +14,12 @@ import { Request } from "express";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { userSearchableFields } from "./user.constant";
+import ApiError from "../../error/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const createAdminIntoDB = async (
   req: Request & { user?: any }
 ): Promise<Admin> => {
-  //do not strong validate because we are use refresh token
-
-  // const user = req.user;
-  // const isActiveUser = await prisma.user.findUnique({
-  //   where: {
-  //     id: user.userId,
-  //     status: UserStatus.ACTIVE,
-  //   },
-  // });
-  // if (!isActiveUser) {
-  //   throw new ApiError(
-  //     StatusCodes.UNAUTHORIZED,
-  //     "This user blocked or deleted by admin!"
-  //   );
-  // }
-  // if (isActiveUser.email && isActiveUser.role) {
-  //   await checkIsDeleted(isActiveUser.email, isActiveUser.role);
-  // }
   const file = req.file as IFile;
 
   if (file) {
@@ -43,6 +27,16 @@ const createAdminIntoDB = async (
       file
     );
     req.body.admin.profilePhoto = uploadToCloundinary?.secure_url;
+  }
+
+  const admin = await prisma.user.findUnique({
+    where: {
+      email: req.body.admin.email,
+    },
+  });
+
+  if (admin) {
+    throw new ApiError(StatusCodes.CONFLICT, "This email already registered!");
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 12);
@@ -75,7 +69,15 @@ const createPetPublisherIntoDB = async (req: Request): Promise<Publisher> => {
     );
     req.body.publisher.profilePhoto = uploadToCloundinary?.secure_url;
   }
+  const publisher = await prisma.user.findUnique({
+    where: {
+      email: req.body.publisher.email,
+    },
+  });
 
+  if (publisher) {
+    throw new ApiError(StatusCodes.CONFLICT, "This email already registered!");
+  }
   const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
   const result = await prisma.$transaction(async (transactionClient) => {
@@ -105,6 +107,16 @@ const createPetAdopterIntoDB = async (req: Request): Promise<Adopter> => {
       file
     );
     req.body.adopter.profilePhoto = uploadToCloundinary?.secure_url;
+  }
+
+  const adopter = await prisma.user.findUnique({
+    where: {
+      email: req.body.adopter.email,
+    },
+  });
+
+  if (adopter) {
+    throw new ApiError(StatusCodes.CONFLICT, "This email already registered!");
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 12);
