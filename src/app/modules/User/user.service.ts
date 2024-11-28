@@ -168,6 +168,13 @@ const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
       })),
     });
   }
+
+  andCondition.push({
+    role: {
+      not: UserRole.ADMIN, // Exclude users with the 'ADMIN' role
+    },
+  });
+
   //becuase admin see all user
   // andCondition.push({
   //   isDeleted: false,
@@ -233,10 +240,29 @@ const changeUserStatus = async (id: string, status: UserRole) => {
   return updateUserStatus;
 };
 
+const getMyProfile = async (user: any) => {
+  console.log(user);
+
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      id: user.userId,
+      status: UserStatus.ACTIVE,
+    },
+    include: {
+      admin: true,
+      publisher: true,
+      adopter: true,
+    },
+  });
+
+  return userData;
+};
+
 export const UserServices = {
   createAdminIntoDB,
   createPetPublisherIntoDB,
   createPetAdopterIntoDB,
   getAllUserFromDB,
   changeUserStatus,
+  getMyProfile,
 };

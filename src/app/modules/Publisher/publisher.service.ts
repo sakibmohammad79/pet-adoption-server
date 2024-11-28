@@ -142,7 +142,7 @@ const updatePublisherIntoDB = async (
 };
 
 const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
-  const admin = await prisma.publisher.findUniqueOrThrow({
+  const publisher = await prisma.publisher.findUniqueOrThrow({
     where: {
       id,
     },
@@ -151,7 +151,7 @@ const deletePublisherFromDB = async (id: string): Promise<Publisher | null> => {
     const publisherProfileDeleteData = await transactionClient.publisher.delete(
       {
         where: {
-          id: admin.id,
+          id: publisher.id,
         },
       }
     );
@@ -220,6 +220,7 @@ const getAllMyCreatedPet = async (id: string) => {
   const myCreatedPet = await prisma.pet.findMany({
     where: {
       publisherId: publisher.id,
+      isDeleted: false,
     },
     // include: {
     //   publisher: true,

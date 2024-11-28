@@ -50,5 +50,11 @@ router.patch(
   validateRequest(UserValidationSchema.changeUserStatusSchema),
   UserController.changeUserStatus
 );
+router.get(
+  "/my-profile",
+  Guard(UserRole.ADMIN, UserRole.PET_ADOPTER, UserRole.PET_PUBLISHER),
+  // validateRequest(UserValidationSchema.changeUserStatusSchema),
+  UserController.myProfile
+);
 
 export const UserRoutes = router;

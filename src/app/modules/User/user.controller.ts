@@ -61,6 +61,18 @@ const changeUserStatus: RequestHandler = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const myProfile: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res) => {
+    const { user } = req;
+    const result = await UserServices.getMyProfile(user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Profile data fetched successfully!",
+      data: result,
+    });
+  }
+);
 
 export const UserController = {
   createAdmin,
@@ -68,4 +80,5 @@ export const UserController = {
   createPetAdopter,
   getAllUser,
   changeUserStatus,
+  myProfile,
 };

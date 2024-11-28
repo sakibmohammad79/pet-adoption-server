@@ -26,6 +26,10 @@ router.patch(
 
 router.delete("/:id", Guard(UserRole.ADMIN), PetController.deletePet);
 
-router.delete("/soft/:id", Guard(UserRole.ADMIN), PetController.softDeletePet);
+router.delete(
+  "/soft/:id",
+  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),
+  PetController.softDeletePet
+);
 
 export const PetRoutes = router;
