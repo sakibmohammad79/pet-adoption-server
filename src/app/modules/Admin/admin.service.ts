@@ -428,12 +428,18 @@ const rejectAdoption = async (adoptionId: string) => {
   // Update the adoption status to approved
   const updateAdoption = await prisma.adoption.update({
     where: { id: adoptionId },
-    data: { adoptionStatus: PetAdoptStatus.PENDING },
+    data: { adoptionStatus: PetAdoptStatus.REJECTED },
   });
 
-  if (updateAdoption.adoptionStatus === PetAdoptStatus.PENDING) {
+  if (updateAdoption.adoptionStatus === PetAdoptStatus.REJECTED) {
+    //delete adoption request
+    await prisma.adoption.delete({
+      where: {
+        id: adoptionId,
+      },
+    });
     // Mark the pet as adopted and update the adoption status
-    const updatedPet = await prisma.pet.update({
+    await prisma.pet.update({
       where: { id: adoption.petId },
       data: { isAdopt: false, isBooked: false, isPublished: true }, // Mark as adopted, unpublish from homepage
     });

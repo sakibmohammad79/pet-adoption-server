@@ -293,6 +293,9 @@ const getAllMyAdopterPet = async (id: string) => {
     where: {
       adopterId: adopter.id,
     },
+    include: {
+      pet: true,
+    },
   });
   return myAdoptPet;
 };
