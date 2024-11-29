@@ -269,7 +269,40 @@ const petBookedIntoDB = async (petId: string, adopterId: string) => {
   return petBookedIntoDB;
 };
 
-const getAllMyAdopterPet = async (id: string) => {
+const getAllMyBookedPet = async (id: string) => {
+  const adopter = await prisma.adopter.findFirstOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  const isActiveUser = await prisma.user.findUnique({
+    where: {
+      email: adopter.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+  if (!isActiveUser) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "This user blocked or deleted by admin!"
+    );
+  }
+
+  const myBookedPet = await prisma.adoption.findMany({
+    where: {
+      adopterId: adopter.id,
+      pet: {
+        isBooked: true,
+      },
+    },
+    include: {
+      pet: true,
+    },
+  });
+  return myBookedPet;
+};
+const getAllMyAdoptedPet = async (id: string) => {
   const adopter = await prisma.adopter.findFirstOrThrow({
     where: {
       id,
@@ -292,6 +325,9 @@ const getAllMyAdopterPet = async (id: string) => {
   const myAdoptPet = await prisma.adoption.findMany({
     where: {
       adopterId: adopter.id,
+      pet: {
+        isAdopt: true,
+      },
     },
     include: {
       pet: true,
@@ -307,5 +343,6 @@ export const AdopterService = {
   deleteAdopterFromDB,
   softDeleteAdopterFromDB,
   petBookedIntoDB,
-  getAllMyAdopterPet,
+  getAllMyBookedPet,
+  getAllMyAdoptedPet,
 };

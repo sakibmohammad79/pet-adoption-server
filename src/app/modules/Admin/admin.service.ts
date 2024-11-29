@@ -297,8 +297,6 @@ const petUnpublishIntoDB = async (id: string, user: any) => {
   const pet = await prisma.pet.findFirstOrThrow({
     where: {
       id,
-      isBooked: false,
-      isAdopt: false,
       isPublished: true,
       isDeleted: false,
     },
@@ -377,7 +375,7 @@ const approveAdoption = async (adoptionId: string) => {
     // Mark the pet as adopted and update the adoption status
     const updatedPet = await prisma.pet.update({
       where: { id: adoption.petId },
-      data: { isAdopt: true, isBooked: false, isPublished: false }, // Mark as adopted, unpublish from homepage
+      data: { isAdopt: true },
     });
     if (updatedPet.isAdopt) {
       await emailSender(

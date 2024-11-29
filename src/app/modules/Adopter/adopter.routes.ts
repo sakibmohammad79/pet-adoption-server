@@ -13,9 +13,14 @@ router.get("/", AdopterController.getAllAdopter);
 router.get("/:id", AdopterController.getSingleAdopter);
 
 router.get(
-  "/adopt-pet/:id",
+  "/booked-pet/:id",
   Guard(UserRole.PET_ADOPTER),
-  AdopterController.myAdopterPet
+  AdopterController.myBookedPet
+);
+router.get(
+  "/adopted-pet/:id",
+  Guard(UserRole.PET_ADOPTER),
+  AdopterController.myAdoptedPet
 );
 
 router.patch(

@@ -77,10 +77,22 @@ const petBooked: RequestHandler = catchAsync(
   }
 );
 
-const myAdopterPet: RequestHandler = catchAsync(
+const myBookedPet: RequestHandler = catchAsync(
   async (req: Request & { user?: any }, res, next) => {
     const { id } = req.params;
-    const result = await AdopterService.getAllMyAdopterPet(id);
+    const result = await AdopterService.getAllMyBookedPet(id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "My adopt pet fetched successfully!",
+      data: result,
+    });
+  }
+);
+const myAdoptedPet: RequestHandler = catchAsync(
+  async (req: Request & { user?: any }, res, next) => {
+    const { id } = req.params;
+    const result = await AdopterService.getAllMyAdoptedPet(id);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -97,5 +109,6 @@ export const AdopterController = {
   deleteAdopter,
   softDeleteAdopter,
   petBooked,
-  myAdopterPet,
+  myBookedPet,
+  myAdoptedPet,
 };
