@@ -1,4 +1,4 @@
-import { Gender, HealthStatus, PetSize } from "@prisma/client";
+import { Gender, HealthStatus, PetSize, Species } from "@prisma/client";
 
 export interface IPet {
   name: string;
@@ -16,4 +16,5 @@ export interface IPet {
   specialNeeds?: string;
   location?: string;
   publisherId: string;
+  species: Species;
 }
