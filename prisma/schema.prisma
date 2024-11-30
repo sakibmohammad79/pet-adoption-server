@@ -96,6 +96,7 @@ model Publisher{
 model Pet {
   id String @id @default(uuid())
   name   String
+  species Species
   image String
   birthDate   DateTime?
   description String?
@@ -184,5 +185,13 @@ enum PetSize {
   SMALL
   MEDIUM
   LARGE
+}
+
+enum Species {
+  DOG
+  CAT
+  RABBIT
+  BIRD
+  Fish
 }
 

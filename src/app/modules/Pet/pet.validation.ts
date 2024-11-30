@@ -4,6 +4,9 @@ import { Gender, HealthStatus, PetAdoptStatus, PetSize } from "@prisma/client";
 export const createPetSchema = z.object({
   body: z.object({
     name: z.string().min(1, { message: "Name is required!" }),
+    species: z.enum(["DOG", "CAT", "RABBIT", "BIRD"], {
+      message: "Species must be one of Dog, Cat, Rabbit, or Bird!",
+    }),
     image: z.string().url({ message: "Image URL must be a valid URL!" }),
     birthDate: z.preprocess((arg) => {
       if (typeof arg === "string") {
@@ -35,6 +38,11 @@ export const createPetSchema = z.object({
 const updatePetSchema = z.object({
   body: z.object({
     name: z.string().optional(),
+    species: z
+      .enum(["DOG", "CAT", "RABBIT", "BIRD"], {
+        message: "Species must be one of DOG, CAT, RABBIT, or BIRD!",
+      })
+      .optional(),
     image: z.string().optional(),
     birthDate: z.preprocess((arg) => {
       if (typeof arg === "string") {
