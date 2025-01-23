@@ -20,10 +20,6 @@ const loginUserIntoDB = async (payload: {
     },
   });
 
-  // if (!user) {
-  //   throw new ApiError(StatusCodes.NOT_FOUND, "User does not exists!");
-  // }
-
   if (user.email && user.role) {
     await checkIsDeleted(user.email, user.role);
   }
