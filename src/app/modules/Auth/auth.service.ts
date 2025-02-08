@@ -100,6 +100,8 @@ const changePassword = async (
     },
   });
 
+  // console.log(userData);
+
   if (userData.email && userData.role) {
     await checkIsDeleted(userData.email, userData.role);
   }
@@ -128,6 +130,7 @@ const changePassword = async (
   });
 
   return {
+    success: true,
     message: "password change successfully!",
   };
 };

@@ -192,6 +192,6 @@ enum Species {
   CAT
   RABBIT
   BIRD
-  Fish
+  
 }
 
