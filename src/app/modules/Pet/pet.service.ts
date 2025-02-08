@@ -79,9 +79,10 @@ const getAllPetFromDB = async (params: any, options: IPaginationOptions) => {
 };
 
 const createPetIntoDB = async (data: IPet, user: any) => {
+  console.log(user);
   const userData = await prisma.user.findFirstOrThrow({
     where: {
-      id: user.userId,
+      id: user?.userId,
       status: UserStatus.ACTIVE,
       role: UserRole.PET_PUBLISHER,
     },

@@ -12,7 +12,7 @@ router.get("/", Guard(UserRole.ADMIN), UserController.getAllUser);
 
 router.post(
   "/create-admin",
-  // Guard(UserRole.ADMIN),
+  Guard(UserRole.ADMIN),
   imageUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = UserValidationSchema.createAdminValidationSchema.parse(
