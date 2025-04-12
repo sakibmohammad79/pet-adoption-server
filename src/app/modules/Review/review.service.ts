@@ -80,8 +80,47 @@ const deleteReview = async (id: string) => {
   return deleteReview;
 };
 
+const publishedReviewIntoDB = async (id: string) => {
+  const review = await prisma.review.findUniqueOrThrow({
+    where: {
+      id,
+      isPublished: false
+    },
+  });
+  if(!review){
+    throw new ApiError(StatusCodes.NOT_FOUND, "Review not found for publish!")
+  }
+
+  const result = await prisma.review.update({
+    where: {
+      id
+    },
+    data: {isPublished: true}
+  })
+}
+const unpublishedReviewIntoDB = async (id: string) => {
+  const review = await prisma.review.findUniqueOrThrow({
+    where: {
+      id,
+      isPublished: true
+    },
+  });
+  if(!review){
+    throw new ApiError(StatusCodes.NOT_FOUND, "Review not found for unpublished!")
+  }
+
+  const result = await prisma.review.update({
+    where: {
+      id
+    },
+    data: {isPublished: false}
+  })
+}
+
 export const ReviewService = {
   createReviewIntoDB,
   getAllReview,
   deleteReview,
+  publishedReviewIntoDB,
+  unpublishedReviewIntoDB
 };

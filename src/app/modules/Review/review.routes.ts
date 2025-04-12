@@ -17,5 +17,7 @@ router.post(
 router.get("/", ReviewController.getAllReview);
 
 router.delete("/:id", Guard(UserRole.ADMIN), ReviewController.deleteReview);
+router.patch("/publish-review/:id", Guard(UserRole.ADMIN), ReviewController.publishedReview);
+router.patch("/unpublish-review/:id", Guard(UserRole.ADMIN), ReviewController.unpublishedReview);
 
 export const ReviewRoutes = router;
