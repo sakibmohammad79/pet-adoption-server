@@ -97,6 +97,7 @@ const publishedReviewIntoDB = async (id: string) => {
     },
     data: {isPublished: true}
   })
+  return result
 }
 const unpublishedReviewIntoDB = async (id: string) => {
   const review = await prisma.review.findUniqueOrThrow({
@@ -115,6 +116,7 @@ const unpublishedReviewIntoDB = async (id: string) => {
     },
     data: {isPublished: false}
   })
+  return result
 }
 
 export const ReviewService = {
