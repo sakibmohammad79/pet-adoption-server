@@ -230,6 +230,16 @@ const getAllMyCreatedPet = async (id: string) => {
   return myCreatedPet;
 };
 
+const getAllMyPublishedPetIntoDB = async(id: string) => {
+  const result = await prisma.pet.findMany({
+    where: {
+      publisherId: id,
+      isPublished: true
+    }
+  })
+  return result
+}
+
 export const PublisherService = {
   getSinglePublisherById,
   getAllPublisherFromDB,
@@ -237,4 +247,5 @@ export const PublisherService = {
   deletePublisherFromDB,
   softDeletePublisherFromDB,
   getAllMyCreatedPet,
+  getAllMyPublishedPetIntoDB
 };

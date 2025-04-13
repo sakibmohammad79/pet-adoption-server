@@ -78,6 +78,16 @@ const myAllCreatedPet: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const myAllPublishedPet: RequestHandler = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await PublisherService.getAllMyPublishedPetIntoDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "My all my published pet fetched successfully!",
+    data: result,
+  });
+});
 
 export const PublisherController = {
   getSinglePublisher,
@@ -86,4 +96,5 @@ export const PublisherController = {
   deletePublisher,
   softDeletePublisher,
   myAllCreatedPet,
+  myAllPublishedPet
 };

@@ -16,7 +16,7 @@ router.post(
 
 router.get("/", ReviewController.getAllReview);
 
-router.delete("/:id", Guard(UserRole.ADMIN), ReviewController.deleteReview);
+router.delete("/delete-review/:id", Guard(UserRole.ADMIN), ReviewController.deleteReview);
 router.patch("/publish-review/:id",  ReviewController.publishedReview);
 router.patch("/unpublish-review/:id",  ReviewController.unpublishedReview);
 

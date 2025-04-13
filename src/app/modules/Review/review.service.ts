@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
 
 const createReviewIntoDB = async (data: IReview, user: any) => {
+  console.log(data, "data");
   const isActiveUser = await prisma.user.findUnique({
     where: {
       id: user.userId,
@@ -25,8 +26,9 @@ const createReviewIntoDB = async (data: IReview, user: any) => {
       isActiveUser.role
     );
   }
+  console.log(userProfileData);
   if (!(userProfileData?.id === data.reviewerId)) {
-    throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unauthorized!");
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unauthorized!!");
   }
 
   let reviewerData = null;
@@ -36,6 +38,7 @@ const createReviewIntoDB = async (data: IReview, user: any) => {
       data: {
         rating: data.rating,
         comment: data.comment,
+        photo: userProfileData.profilePhoto || "https://i.postimg.cc/Pxf7WpS0/user.png",
         adopterId: data.reviewerId, // Ensure this ID exists in the Adopter table
         publisherId: null, // Set to null
       },
@@ -46,6 +49,7 @@ const createReviewIntoDB = async (data: IReview, user: any) => {
       data: {
         rating: data.rating,
         comment: data.comment,
+        photo: userProfileData.profilePhoto || "https://i.postimg.cc/Pxf7WpS0/user.png",
         publisherId: data.reviewerId, // Set to null
         adopterId: null, // Ensure this ID exists in the Adopter table
       },
