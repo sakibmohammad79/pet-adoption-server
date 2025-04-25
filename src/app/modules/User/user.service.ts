@@ -241,7 +241,7 @@ const changeUserStatus = async (id: string, status: UserRole) => {
 };
 
 const getMyProfile = async (user: any) => {
-  console.log(user);
+ 
 
   const userData = await prisma.user.findFirstOrThrow({
     where: {

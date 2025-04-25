@@ -6,7 +6,6 @@ import { StatusCodes } from "http-status-codes";
 import { checkIsDeleted } from "../../../helpers/checkIsDeleted";
 
 const createReviewIntoDB = async (data: IReview, user: any) => {
-  console.log(data, "data");
   const isActiveUser = await prisma.user.findUnique({
     where: {
       id: user.userId,
@@ -26,7 +25,6 @@ const createReviewIntoDB = async (data: IReview, user: any) => {
       isActiveUser.role
     );
   }
-  console.log(userProfileData);
   if (!(userProfileData?.id === data.reviewerId)) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, "You are unauthorized!!");
   }
