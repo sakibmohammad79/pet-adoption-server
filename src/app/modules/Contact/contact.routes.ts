@@ -5,6 +5,8 @@ import { ContactMessageValidation } from "./contact.validation";
 
 const router = Router();
 
+router.get('/', ContactMessageController.getAllContactMessage);
+
 router.post('/', validateRequest(ContactMessageValidation.createContactontactMessageValidationSchema),
      ContactMessageController.createContactMessage);
 

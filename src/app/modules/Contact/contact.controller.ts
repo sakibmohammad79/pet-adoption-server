@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 
 const createContactMessage: RequestHandler = catchAsync(
     async (req, res) => {
-      const result = await ContactMessageService.createContactMessgaeIntoDB(req.body);
+      const result = await ContactMessageService.createContactMessgeIntoDB(req.body);
       sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -15,6 +15,18 @@ const createContactMessage: RequestHandler = catchAsync(
       });
     }
   );
+const getAllContactMessage: RequestHandler = catchAsync(
+    async (req, res) => {
+      const result = await ContactMessageService.getAllContactMessgeFromDB();
+      sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Get all contact message successfully!",
+        data: result,
+      });
+    }
+  );
   export const ContactMessageController = {
     createContactMessage,
+    getAllContactMessage,
   }
