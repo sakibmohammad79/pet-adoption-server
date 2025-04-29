@@ -7,18 +7,18 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-// app.use(
-//   cors({
-//     origin: "*",
-//     credentials: true,
-//   })
-// );
 app.use(
   cors({
-    origin: "https://pet-adoption-frontend-roan.vercel.app",
+    origin: "*",
     credentials: true,
   })
 );
+// app.use(
+//   cors({
+//     origin: "https://pet-adoption-frontend-roan.vercel.app",
+//     credentials: true,
+//   })
+// );
 app.use(cookieParser());
 //parser
 app.use(express.json());

@@ -151,6 +151,17 @@ model Review {
   updatedAt      DateTime  @updatedAt
 }
 
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
 enum HealthStatus {
   VACCINATED
   SPAYED_NEUTERED
