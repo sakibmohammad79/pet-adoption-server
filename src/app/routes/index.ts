@@ -6,6 +6,7 @@ import { PublisherRoutes } from "../modules/Publisher/publisher.routes";
 import { AdopterRoutes } from "../modules/Adopter/adopter.routes";
 import { PetRoutes } from "../modules/Pet/pet.routes";
 import { ReviewRoutes } from "../modules/Review/review.routes";
+import { ContactMessageRoutes } from "../modules/Contact/contact.routes";
 
 const router = Router();
 
@@ -37,6 +38,10 @@ const moduleRoutes = [
   {
     path: "/review",
     route: ReviewRoutes,
+  },
+  {
+    path: "/contactmessage",
+    route: ContactMessageRoutes,
   },
 ];
 
