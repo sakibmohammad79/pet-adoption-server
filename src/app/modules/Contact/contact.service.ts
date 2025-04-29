@@ -1,7 +1,10 @@
 import prisma from "../../../shared/prisma"
 
 const createContactMessgaeIntoDB = async(payload: any) => {
- const result = await prisma.contactMessage.create(payload);
+
+ const result = await prisma.contactMessage.create({
+    data: payload
+ });
  return result;
 }
 
