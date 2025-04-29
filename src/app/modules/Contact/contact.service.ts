@@ -5,6 +5,6 @@ const createContactMessgaeIntoDB = async(payload: any) => {
  return result;
 }
 
-export const ContactMessage = {
+export const ContactMessageService = {
     createContactMessgaeIntoDB,
 }
