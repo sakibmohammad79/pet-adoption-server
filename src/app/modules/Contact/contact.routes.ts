@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/', ContactMessageController.getAllContactMessage);
 
-router.post('/', validateRequest(ContactMessageValidation.createContactontactMessageValidationSchema),
+router.post('/create-message', validateRequest(ContactMessageValidation.createContactontactMessageValidationSchema),
      ContactMessageController.createContactMessage);
 
 export const ContactMessageRoutes = router;
