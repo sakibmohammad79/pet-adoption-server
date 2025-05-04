@@ -25,7 +25,7 @@ router.get(
 
 router.patch(
   "/:id",
-  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER),
+  Guard(UserRole.ADMIN, UserRole.PET_PUBLISHER, UserRole.PET_PUBLISHER),
   validateRequest(publisherValidationSchema.updatePublisherValidationSchema),
   PublisherController.updatePublisher
 );

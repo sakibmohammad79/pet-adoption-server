@@ -31,7 +31,7 @@ router.patch(
 
 router.patch(
   "/:id",
-  Guard(UserRole.ADMIN, UserRole.ADMIN),
+  Guard(UserRole.ADMIN, UserRole.ADMIN, UserRole.PET_ADOPTER),
   validateRequest(adopterValidationSchema.updateAdopterValidationSchema),
   AdopterController.updateAdopter
 );
