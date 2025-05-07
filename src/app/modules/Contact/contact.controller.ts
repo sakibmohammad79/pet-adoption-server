@@ -26,7 +26,20 @@ const getAllContactMessage: RequestHandler = catchAsync(
       });
     }
   );
+const deleteContactMessage: RequestHandler = catchAsync(
+    async (req, res) => {
+      const {id} = req.params;
+      const result = await ContactMessageService.deleteMessageFromDB(id);
+      sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Message deleted successfully!",
+        data: result,
+      });
+    }
+  );
   export const ContactMessageController = {
     createContactMessage,
     getAllContactMessage,
+    deleteContactMessage
   }
